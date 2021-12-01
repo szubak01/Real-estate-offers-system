@@ -12,9 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
+public class  SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
 
     public static final String LOGOUT_URL = "/";
+    public static final String LOGIN_URL = "/login";
+    public static final String SIGNUP_URL = "/signup";
 
     @Bean
     public PasswordEncoder passwordEncoder() {

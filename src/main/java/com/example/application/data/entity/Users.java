@@ -1,12 +1,22 @@
 package com.example.application.data.entity;
 
-import com.example.application.data.AbstractEntity;
 import java.time.LocalDate;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Users extends AbstractEntity {
+public class Users{
 
+    @Id
+    @GeneratedValue
+    private Integer id;
     private String username;
     private String password;
     private String email;

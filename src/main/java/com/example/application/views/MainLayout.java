@@ -2,12 +2,16 @@ package com.example.application.views;
 
 import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
+import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.admin.AdminView;
+import com.example.application.views.login.LoginView;
 import com.example.application.views.rentaloffers.RentaloffersView;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Anchor;
@@ -19,12 +23,15 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -82,14 +89,22 @@ public class MainLayout extends AppLayout {
         viewTitle.addClassNames("m-0", "text-l");
 
         Header header = new Header(toggle, viewTitle);
-        header.addClassNames("bg-base", "border-b", "border-contrast-10", "box-border", "flex", "h-xl", "items-center",
-                "w-full");
+        header.addClassNames(
+            "bg-base",
+            "border-b",
+            "border-contrast-10",
+            "box-border",
+            "flex",
+            "h-xl",
+            "items-center",
+            "w-full");
+
         return header;
     }
 
     private Component createDrawerContent() {
-        H2 appName = new H2("RRR");
-        appName.addClassNames("flex", "items-center", "h-xl", "m-0", "px-m", "text-m");
+        H2 appName = new H2("Select view");
+        appName.addClassNames("flex", "items-center", "h-xl", "m-0", "px-m", "text-xl");
 
         com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section(appName,
                 createNavigation(), createFooter());
@@ -121,6 +136,7 @@ public class MainLayout extends AppLayout {
                 new MenuItemInfo("Admin", "la la-columns", AdminView.class), //
 
         };
+
         List<RouterLink> links = new ArrayList<>();
         for (MenuItemInfo menuItemInfo : menuItems) {
             if (accessChecker.hasAccess(menuItemInfo.getView())) {
@@ -137,13 +153,13 @@ public class MainLayout extends AppLayout {
         link.setRoute(menuItemInfo.getView());
 
         Span icon = new Span();
-        icon.addClassNames("me-s", "text-l");
+        icon.addClassNames("me-s", "text-xl");
         if (!menuItemInfo.getIconClass().isEmpty()) {
             icon.addClassNames(menuItemInfo.getIconClass());
         }
 
         Span text = new Span(menuItemInfo.getText());
-        text.addClassNames("font-medium", "text-s");
+        text.addClassNames("font-medium", "text-m");
 
         link.add(icon, text);
         return link;
@@ -153,7 +169,7 @@ public class MainLayout extends AppLayout {
         Footer layout = new Footer();
         layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
 
-        Optional<User> maybeUser = authenticatedUser.get();
+        Optional<User> maybeUser = authenticatedUser.getCurrentUser(); // changed from get() to getCurrentUser()
         if (maybeUser.isPresent()) {
             User user = maybeUser.get();
 
@@ -162,20 +178,30 @@ public class MainLayout extends AppLayout {
 
             ContextMenu userMenu = new ContextMenu(avatar);
             userMenu.setOpenOnClick(true);
-            userMenu.addItem("Logout", e -> {
-                authenticatedUser.logout();
-            });
+            userMenu.addItem("Logout", e -> authenticatedUser.logout());
 
             Span name = new Span(user.getName());
             name.addClassNames("font-medium", "text-s", "text-secondary");
 
             layout.add(avatar, name);
         } else {
-            Anchor loginLink = new Anchor("login", "Sign in");
-            layout.add(loginLink);
+            //Anchor loginLink = new Anchor("login", "Sign in");
+            Button loginButton = new Button("Login", event -> navigateToLoginView());
+            loginButton.addClassNames("box-content", "w-full", "border-primary");
+
+            Button signUpButton = new Button("Sing up");
+            signUpButton.addClassNames("box-content", "w-full", "border-primary");
+
+            //layout.add(loginLink);
+            layout.addClassNames("flex-col");
+            layout.add(loginButton, signUpButton);
         }
 
         return layout;
+    }
+
+    public void navigateToLoginView(){
+        UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGIN_URL);
     }
 
     @Override

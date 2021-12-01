@@ -1,12 +1,13 @@
 package com.example.application.security;
 
 import com.example.application.data.entity.User;
-import com.example.application.data.service.UserRepository;
+import com.example.application.data.repository.UserRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinServletRequest;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.jaas.SecurityContextLoginModule;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class AuthenticatedUser {
                 .filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken));
     }
 
-    public Optional<User> get() {
+    public Optional<User> getCurrentUser() {   // changed from get() to getCurrentUser()
         return getAuthentication().map(authentication -> userRepository.findByUsername(authentication.getName()));
     }
 

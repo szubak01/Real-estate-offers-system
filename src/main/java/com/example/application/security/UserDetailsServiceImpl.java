@@ -1,7 +1,7 @@
 package com.example.application.security;
 
 import com.example.application.data.entity.User;
-import com.example.application.data.service.UserRepository;
+import com.example.application.data.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
