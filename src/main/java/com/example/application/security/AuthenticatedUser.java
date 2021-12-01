@@ -17,23 +17,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticatedUser {
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-    private Optional<Authentication> getAuthentication() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        return Optional.ofNullable(context.getAuthentication())
-                .filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken));
-    }
+  private Optional<Authentication> getAuthentication() {
+    SecurityContext context = SecurityContextHolder.getContext();
+    return Optional.ofNullable(context.getAuthentication())
+        .filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken));
+  }
 
-    public Optional<User> getCurrentUser() {   // changed from get() to getCurrentUser()
-        return getAuthentication().map(authentication -> userRepository.findByUsername(authentication.getName()));
-    }
+  public Optional<User> getCurrentUser() {
+    return getAuthentication()
+        .map(authentication -> userRepository.findByUsername(authentication.getName()));
+  }
 
-    public void logout() {
-        UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGOUT_URL);
-        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-        logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
-    }
+  public void logout() {
+    UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGOUT_URL);
+    SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+    logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
+  }
 
 }
