@@ -22,6 +22,7 @@ public class DataGenerator {
     @Bean
     public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository,
             UsersRepository usersRepository) {
+
         return args -> {
             Logger logger = LoggerFactory.getLogger(getClass());
             if (userRepository.count() != 0L) {
@@ -34,21 +35,27 @@ public class DataGenerator {
 
             logger.info("... generating 2 User entities...");
             User user = new User();
-            user.setName("John Normal");
+//            user.setName("John Normal");
             user.setUsername("user");
             user.setHashedPassword(passwordEncoder.encode("user"));
-            user.setProfilePictureUrl(
-                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
+            user.setEmail("user@example.com");
+            user.setPhoneNumber("123123123");
+            user.setProfilePictureUrl("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
             user.setRoles(Collections.singleton(Role.USER));
             userRepository.save(user);
+
+
             User admin = new User();
-            admin.setName("John Normal");
+//            admin.setName("John Normal");
             admin.setUsername("admin");
             admin.setHashedPassword(passwordEncoder.encode("admin"));
-            admin.setProfilePictureUrl(
-                    "https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
+            admin.setEmail("admin@example.com");
+            admin.setPhoneNumber("blank");
+            admin.setProfilePictureUrl("https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80");
             admin.setRoles(Collections.singleton(Role.ADMIN));
             userRepository.save(admin);
+
+
             logger.info("... generating 100 Users entities...");
             ExampleDataGenerator<Users> usersRepositoryGenerator = new ExampleDataGenerator<>(Users.class,
                     LocalDateTime.of(2021, 11, 29, 0, 0, 0));

@@ -1,10 +1,9 @@
 package com.example.application.views;
 
 import com.example.application.data.entity.User;
-import com.example.application.security.AuthenticatedUser;
+import com.example.application.security.SecurityUtils;
 import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.admin.AdminView;
-import com.example.application.views.login.LoginView;
 import com.example.application.views.rentaloffers.RentaloffersView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -14,7 +13,6 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -23,15 +21,12 @@ import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -67,11 +62,11 @@ public class MainLayout extends AppLayout {
 
   private H1 viewTitle;
 
-  private AuthenticatedUser authenticatedUser;
+  private SecurityUtils securityUtils;
   private AccessAnnotationChecker accessChecker;
 
-  public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
-    this.authenticatedUser = authenticatedUser;
+  public MainLayout(SecurityUtils securityUtils, AccessAnnotationChecker accessChecker) {
+    this.securityUtils = securityUtils;
     this.accessChecker = accessChecker;
 
     setPrimarySection(Section.DRAWER);
@@ -170,30 +165,28 @@ public class MainLayout extends AppLayout {
     Footer layout = new Footer();
     layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
 
-    Optional<User> maybeUser = authenticatedUser.getCurrentUser();
+    Optional<User> maybeUser = securityUtils.getCurrentUser();
     if (maybeUser.isPresent()) {
       User user = maybeUser.get();
 
-      Avatar avatar = new Avatar(user.getName(), user.getProfilePictureUrl());
+      Avatar avatar = new Avatar(user.getUsername(), user.getProfilePictureUrl());
       avatar.addClassNames("me-xs");
 
       ContextMenu userMenu = new ContextMenu(avatar);
       userMenu.setOpenOnClick(true);
-      userMenu.addItem("Logout", e -> authenticatedUser.logout());
+      userMenu.addItem("Logout", e -> securityUtils.logout());
 
-      Span name = new Span(user.getName());
+      Span name = new Span(user.getUsername());
       name.addClassNames("font-medium", "text-s", "text-secondary");
 
       layout.add(avatar, name);
     } else {
-      //Anchor loginLink = new Anchor("login", "Sign in");
       Button loginButton = new Button("Login", event -> navigateToLoginView());
       loginButton.addClassNames("box-content", "w-full", "border-primary");
 
-      Button signUpButton = new Button("Sing up");
+      Button signUpButton = new Button("Sing up", event -> navigateToSignUpView());
       signUpButton.addClassNames("box-content", "w-full", "border-primary");
 
-      //layout.add(loginLink);
       layout.addClassNames("flex-col");
       layout.add(loginButton, signUpButton);
     }
@@ -203,6 +196,11 @@ public class MainLayout extends AppLayout {
 
   public void navigateToLoginView() {
     UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGIN_URL);
+  }
+
+  private void navigateToSignUpView() {
+    UI.getCurrent().getPage().setLocation("/signup");
+
   }
 
   @Override

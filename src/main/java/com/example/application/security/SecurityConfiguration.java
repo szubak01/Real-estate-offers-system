@@ -1,6 +1,7 @@
 package com.example.application.security;
 
 import com.example.application.views.login.LoginView;
+import com.example.application.views.signup.SignUpView;
 import com.vaadin.flow.spring.security.VaadinWebSecurityConfigurerAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,6 @@ public class  SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
 
     public static final String LOGOUT_URL = "/";
     public static final String LOGIN_URL = "/login";
-    public static final String SIGNUP_URL = "/signup";
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,4 +35,6 @@ public class  SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
         super.configure(web);
         web.ignoring().antMatchers("/images/*.png");
     }
+
+
 }

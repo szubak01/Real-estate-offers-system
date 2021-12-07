@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthenticatedUser {
+public class SecurityUtils {
 
   @Autowired
   private UserRepository userRepository;
@@ -29,6 +29,13 @@ public class AuthenticatedUser {
   public Optional<User> getCurrentUser() {
     return getAuthentication()
         .map(authentication -> userRepository.findByUsername(authentication.getName()));
+  }
+
+  static boolean isUserLoggedIn() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return authentication != null
+        && !(authentication instanceof AnonymousAuthenticationToken)
+        && authentication.isAuthenticated();
   }
 
   public void logout() {
