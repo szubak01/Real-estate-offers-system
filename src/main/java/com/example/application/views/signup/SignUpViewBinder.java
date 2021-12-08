@@ -10,36 +10,36 @@ import com.vaadin.flow.data.binder.ValueContext;
 
 public class SignUpViewBinder {
 
-  private final SignUpView signUpView;
+  private SignUpForm signUpForm;
 
   //Flag for disabling first run for password validation
   private boolean enablePasswordValidation;
 
-  public SignUpViewBinder(SignUpView signUpView) {
-    this.signUpView = signUpView;
+  public SignUpViewBinder(SignUpForm signUpForm) {
+    this.signUpForm = signUpForm;
   }
 
   //Method to add the data binding and validation logics
   //to the signUp form
   public void addBindingAndValidation() {
     BeanValidationBinder<User> binder = new BeanValidationBinder<>(User.class);
-    binder.bindInstanceFields(signUpView);
+    binder.bindInstanceFields(signUpForm);
 
     // Custom validator for password fields
-    binder.forField(signUpView.getHashedPassword())
+    binder.forField(signUpForm.getPassword())
         .withValidator(this::passwordValidator).bind("password");
 
     // The passwordConfirm field is not connected to binder, but binder has to re-check the password validator when the field value changes
-    signUpView.getPasswordConfirm().addValueChangeListener(e -> {
+    signUpForm.getPasswordConfirm().addValueChangeListener(e -> {
       // user modified the second field, now we can validate/show errors
       enablePasswordValidation = true;
 
       binder.validate();
     });
 
-    binder.setStatusLabel(signUpView.getErrorMessageFailed());
+    binder.setStatusLabel(signUpForm.getErrorMessageFailed());
 
-    signUpView.getSignUpButton().addClickListener(e -> {
+    signUpForm.getSignUpButton().addClickListener(e -> {
       try{
         // Empty bean to store provided details
         User user = new User();
@@ -72,7 +72,7 @@ public class SignUpViewBinder {
       return ValidationResult.ok();
     }
 
-    String passwordConfirm = signUpView.getPasswordConfirm().getValue();
+    String passwordConfirm = signUpForm.getPasswordConfirm().getValue();
 
     if (password != null && password.equals(passwordConfirm)) {
       return ValidationResult.ok();
