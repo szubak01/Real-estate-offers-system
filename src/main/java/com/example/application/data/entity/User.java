@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
-
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class User {
@@ -30,17 +31,20 @@ public class User {
     @Nonnull
     private Integer id;
 
-    @NotBlank
+    @NotBlank(message = "Provide username.")
     private String username;
 
-    @NotBlank
-    @Email
+    // todo: regex email
+    @NotBlank(message = "Provide email.")
+    @Email(message = "Email must be properly formatted. \n  e.g. example@gmail.com")
     private String email;
 
     @JsonIgnore
-    private String hashedPassword;
+    @Size(min = 8, max = 64, message = "Password must be 8-64 char long")
+    private String password;
 
-    @NotBlank
+    // todo: regex password
+    @NotBlank(message = "Provide phone number.")
     private String phoneNumber;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -51,16 +55,4 @@ public class User {
 
     private Instant createdAt;
 
-    public User(@Nonnull Integer id, @NotBlank String username,
-        @NotBlank @Email String email, String hashedPassword,
-        @NotBlank String phoneNumber, Set<Role> roles, String profilePictureUrl, Instant createdAt) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.hashedPassword = hashedPassword;
-        this.phoneNumber = phoneNumber;
-        this.roles = roles;
-        this.profilePictureUrl = profilePictureUrl;
-        this.createdAt = createdAt;
-    }
 }

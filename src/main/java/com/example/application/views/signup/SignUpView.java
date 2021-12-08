@@ -8,6 +8,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -25,27 +26,39 @@ import lombok.Getter;
 @Getter
 public class SignUpView extends VerticalLayout{
 
-  private FormLayout formLayout = new FormLayout();
-  private H2 title;
-  private Hr separator;
-  private TextField username;
-  private EmailField email;
-  private PasswordField password;
-  private TextField phoneNumber;
-  private Button signUpButton;
+  private final FormLayout formLayout = new FormLayout();
+  private final H2 title;
+  private final Hr separator;
+
+  private final TextField username;
+  private final EmailField email;
+  private final PasswordField hashedPassword;
+  private final PasswordField passwordConfirm;
+  private final TextField phoneNumber;
+  private final Button signUpButton;
+
+  private final Span errorMessageFailed;
 
   public SignUpView() {
 
     separator = new Hr();
     title = new H2("Sign up");
+
     username = new TextField("Username");
     email = new EmailField("Email");
-    password = new PasswordField("Password");
+    hashedPassword = new PasswordField("Password");
+    passwordConfirm = new PasswordField("Confirm password");
     phoneNumber = new TextField("Phone");
-    signUpButton = new Button("Sign Up");
 
-    formLayout.add(title, separator,
-        username, email, password, phoneNumber,
+    signUpButton = new Button("Sign Up");
+    errorMessageFailed = new Span();
+
+    formLayout.add(
+        title, separator,
+        username, email,
+        hashedPassword, passwordConfirm,
+        phoneNumber,
+        errorMessageFailed,
         signUpButton
     );
 
@@ -53,9 +66,12 @@ public class SignUpView extends VerticalLayout{
     styleFormLayout();
     styleFormLayoutElements();
     responsiveFormLayout();
-    setRequiredIndicatorVisible(username, email, password, phoneNumber);
+    setRequiredIndicatorVisible(username, email, hashedPassword, passwordConfirm, phoneNumber);
 
     add(formLayout);
+
+    SignUpViewBinder signUpViewBinder = new SignUpViewBinder(this);
+    signUpViewBinder.addBindingAndValidation();
   }
 
   private void styleVerticalLayout(){
@@ -87,21 +103,23 @@ public class SignUpView extends VerticalLayout{
 
   private void responsiveFormLayout(){
     // max width of the form
-    formLayout.setMaxWidth("320px");
+    formLayout.setMaxWidth("500px");
 
     // Allow the form layout to be responsive
-    // On device widths 0-300px we have one column, otherwise there are two columns
+    // On device widths 0-490px we have one column, otherwise there are two columns
     formLayout.setResponsiveSteps(
         new ResponsiveStep("0", 1, ResponsiveStep.LabelsPosition.TOP),
-        new ResponsiveStep("300px", 2, ResponsiveStep.LabelsPosition.TOP)
+        new ResponsiveStep("490px", 2, ResponsiveStep.LabelsPosition.TOP)
     );
 
     // These components always take full width
     formLayout.setColspan(title, 2);
-    formLayout.setColspan(username, 2);
-    formLayout.setColspan(email, 2);
-    formLayout.setColspan(password, 2);
-    formLayout.setColspan(phoneNumber, 2);
+    formLayout.setColspan(separator, 2);
+    formLayout.setColspan(username, 1);
+    formLayout.setColspan(email, 1);
+    formLayout.setColspan(hashedPassword, 1);
+    formLayout.setColspan(passwordConfirm, 1);
+    formLayout.setColspan(phoneNumber, 1);
     formLayout.setColspan(signUpButton, 2);
   }
 
