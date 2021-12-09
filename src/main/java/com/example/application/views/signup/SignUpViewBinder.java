@@ -10,7 +10,7 @@ import com.vaadin.flow.data.binder.ValueContext;
 
 public class SignUpViewBinder {
 
-  private SignUpForm signUpForm;
+  private final SignUpForm signUpForm;
 
   //Flag for disabling first run for password validation
   private boolean enablePasswordValidation;

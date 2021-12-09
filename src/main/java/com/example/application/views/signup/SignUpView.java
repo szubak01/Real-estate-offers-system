@@ -1,12 +1,10 @@
 package com.example.application.views.signup;
 
-
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import lombok.Getter;
-
 
 @PageTitle("Sign up")
 @Route(value = "signup")
@@ -28,9 +26,5 @@ public class SignUpView extends VerticalLayout {
     SignUpViewBinder signUpViewBinder = new SignUpViewBinder(signUpForm);
     signUpViewBinder.addBindingAndValidation();
   }
-
-
-
-
 
 }
