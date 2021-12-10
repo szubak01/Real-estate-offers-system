@@ -9,7 +9,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -17,13 +16,16 @@ import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -163,23 +165,35 @@ public class MainLayout extends AppLayout {
 
   private Footer createFooter() {
     Footer layout = new Footer();
-    layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
+    layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs", "overflow-hidden");
 
     Optional<User> maybeUser = securityUtils.getCurrentUser();
     if (maybeUser.isPresent()) {
       User user = maybeUser.get();
 
-      Avatar avatar = new Avatar(user.getUsername());
-      avatar.addClassNames("me-xs");
+      Image image = new Image();
+      image.setMaxHeight("35px");
+      image.setMaxWidth("40px");
+      image.getStyle().set("border-radius", "12px");
+      image.getStyle().set("margin-right", "10px");
 
-      ContextMenu userMenu = new ContextMenu(avatar);
+      image.getElement().setAttribute("src",
+          new StreamResource(" ",
+              ()-> new ByteArrayInputStream(user.getProfilePictureUrl())));
+
+      ContextMenu userMenu = new ContextMenu(image);
       userMenu.setOpenOnClick(true);
       userMenu.addItem("Logout", e -> securityUtils.logout());
 
       Span name = new Span(user.getUsername());
-      name.addClassNames("font-medium", "text-s", "text-secondary");
+      name.addClassNames("font-medium", "text-m", "text-secondary");
+      name.setMaxWidth("80px");
 
-      layout.add(avatar, name);
+      Button logoutButton = new Button("Logout", event -> securityUtils.logout());
+      logoutButton.addClassNames("box-content", "ml-m", "mx-s");
+
+      layout.add(image, name, logoutButton);
+
     } else {
       Button loginButton = new Button("Login", event -> navigateToLoginView());
       loginButton.addClassNames("box-content", "w-full", "border-primary");

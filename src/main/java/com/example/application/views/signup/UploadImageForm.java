@@ -16,7 +16,10 @@ public class UploadImageForm extends Div {
 
   public UploadImageForm(){
 
+    int maxFileSizeInBytes = 10 * 1024 * 1024; // 10MB
+    upload.setMaxFileSize(maxFileSizeInBytes);
     upload.setAcceptedFileTypes("image/*");
+
     upload.setMaxWidth("466px");
     upload.getStyle().set("margin-top", "5px");
 

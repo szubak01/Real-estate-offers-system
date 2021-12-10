@@ -37,7 +37,7 @@ public class User {
 
     // todo: regex email
     @NotBlank(message = "Provide email.")
-    @Email(message = "Email must be properly formatted. \n    e.g. example@gmail.com")
+    @Email(message = "Email must be properly formatted.\n    e.g. example@gmail.com")
     private String email;
 
     @JsonIgnore
