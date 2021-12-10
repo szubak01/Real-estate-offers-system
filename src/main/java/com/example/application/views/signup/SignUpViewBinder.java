@@ -1,22 +1,29 @@
 package com.example.application.views.signup;
 
 import com.example.application.data.entity.User;
+import com.example.application.data.service.UserService;
+import com.example.application.security.SecurityConfiguration;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.ValueContext;
+import java.io.IOException;
 
 public class SignUpViewBinder {
 
   private final SignUpForm signUpForm;
+  private final UserService userService;
 
   //Flag for disabling first run for password validation
   private boolean enablePasswordValidation;
 
-  public SignUpViewBinder(SignUpForm signUpForm) {
+  public SignUpViewBinder(SignUpForm signUpForm,
+      UserService userService) {
     this.signUpForm = signUpForm;
+    this.userService = userService;
   }
 
   //Method to add the data binding and validation logics
@@ -45,11 +52,9 @@ public class SignUpViewBinder {
         User user = new User();
         //Run validators and write the values to the bean
         binder.writeBean(user);
-
-        //todo: save bean to database
-
-        showSuccess(user);
-      } catch (ValidationException validationException) {
+        userService.signUp(signUpForm);
+        showSuccess();
+      } catch (ValidationException | IOException validationException) {
         // validators exceptions are already visible for each field,
         // and bean-level errors are shown in the status label
         validationException.printStackTrace();
@@ -81,11 +86,14 @@ public class SignUpViewBinder {
     return ValidationResult.error("Passwords doesn't match.");
   }
 
-  private void showSuccess(User user) {
-    Notification notification =
-        Notification.show("Successful registration, welcome " + user.getUsername());
+  private void showSuccess(){
+    Notification notification = Notification.show(
+        "Successful registration, now u can log in.",
+        3500,
+        Notification.Position.MIDDLE
+    );
     notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-    //todo: redirect user to MainLayout
+    UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGIN_URL);
   }
 }

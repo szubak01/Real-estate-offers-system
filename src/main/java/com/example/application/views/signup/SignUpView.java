@@ -1,5 +1,6 @@
 package com.example.application.views.signup;
 
+import com.example.application.data.service.UserService;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -12,9 +13,12 @@ import lombok.Getter;
 @Getter
 public class SignUpView extends VerticalLayout {
 
-  public SignUpView() {
+  private final UserService userService;
 
-    SignUpForm signUpForm = new SignUpForm();
+  public SignUpView(UserService userService) {
+    this.userService = userService;
+
+    SignUpForm signUpForm = new SignUpForm(this.userService);
 
     setSizeFull();
     setHorizontalComponentAlignment(Alignment.CENTER, signUpForm);
@@ -23,7 +27,7 @@ public class SignUpView extends VerticalLayout {
 
     add(signUpForm);
 
-    SignUpViewBinder signUpViewBinder = new SignUpViewBinder(signUpForm);
+    SignUpViewBinder signUpViewBinder = new SignUpViewBinder(signUpForm, userService);
     signUpViewBinder.addBindingAndValidation();
   }
 

@@ -11,11 +11,25 @@ import lombok.Getter;
 @Getter
 public class UploadImageForm extends Div {
 
+  MemoryBuffer buffer = new MemoryBuffer();
+  Upload upload = new Upload(buffer);
+
   public UploadImageForm(){
 
-    MemoryBuffer buffer = new MemoryBuffer();
-    Upload upload = new Upload(buffer);
     upload.setAcceptedFileTypes("image/*");
+    upload.setMaxWidth("466px");
+    upload.getStyle().set("margin-top", "5px");
+
+    Paragraph hint = new Paragraph("Accepted file formats: (.png), (.jpg/.jpeg)");
+    hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
+    hint.getStyle().set("margin-top", "15px");
+
+    uploadListeners();
+    setVisible(false);
+    add(hint, upload);
+  }
+
+  private void uploadListeners(){
 
     upload.addFileRejectedListener(event -> {
       String errorMessage = event.getErrorMessage();
@@ -28,15 +42,6 @@ public class UploadImageForm extends Div {
       notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
     });
 
-    upload.setMaxWidth("466px");
-    upload.getStyle().set("margin-top", "5px");
-
-    Paragraph hint = new Paragraph("Accepted file formats: (.png), (.jpg/.jpeg)");
-    hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
-    hint.getStyle().set("margin-top", "15px");
-
-    setVisible(false);
-    add(hint, upload);
   }
 
 }

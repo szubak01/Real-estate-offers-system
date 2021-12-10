@@ -1,5 +1,6 @@
 package com.example.application.views.signup;
 
+import com.example.application.data.service.UserService;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,6 +19,8 @@ import lombok.Getter;
 @Getter
 public class SignUpForm extends FormLayout {
 
+  private final UserService userService;
+
   private final H2 title;
   private final Hr separator;
 
@@ -34,7 +37,8 @@ public class SignUpForm extends FormLayout {
 
   UploadImageForm upload = new UploadImageForm();
 
-  public SignUpForm() {
+  public SignUpForm(UserService userService) {
+    this.userService = userService;
 
     separator = new Hr();
     title = new H2("Sign up");
@@ -47,9 +51,9 @@ public class SignUpForm extends FormLayout {
 
     signUpButton = new Button("Sign Up");
     profilePictureButton = new Button("Add profile picture", new Icon(VaadinIcon.PLUS));
-    profilePictureButton.addClickListener(click -> upload.setVisible(true));
-
     errorMessageFailed = new Span();
+
+    listenersHandler();
     styleFormLayout();
     styleFormLayoutElements();
     responsiveFormLayout();
@@ -64,6 +68,14 @@ public class SignUpForm extends FormLayout {
         errorMessageFailed,
         signUpButton
     );
+  }
+
+  private void listenersHandler(){
+    // opens or closes upload area
+    profilePictureButton.addClickListener(click -> {
+      boolean state = upload.isVisible();
+      upload.setVisible(!state);
+    });
   }
 
   private void styleFormLayout() {

@@ -9,6 +9,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.validation.constraints.Email;
@@ -27,7 +28,7 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Nonnull
     private Integer id;
 
@@ -36,7 +37,7 @@ public class User {
 
     // todo: regex email
     @NotBlank(message = "Provide email.")
-    @Email(message = "Email must be properly formatted. \n  e.g. example@gmail.com")
+    @Email(message = "Email must be properly formatted. \n    e.g. example@gmail.com")
     private String email;
 
     @JsonIgnore
@@ -51,7 +52,7 @@ public class User {
     private Set<Role> roles;
 
     @Lob
-    private String profilePictureUrl;
+    private byte[] profilePictureUrl;
 
     private Instant createdAt;
 
