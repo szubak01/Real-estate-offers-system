@@ -9,6 +9,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -177,10 +178,6 @@ public class MainLayout extends AppLayout {
       image.getStyle().set("border-radius", "12px");
       image.getStyle().set("margin-right", "10px");
 
-      image.getElement().setAttribute("src",
-          new StreamResource(" ",
-              ()-> new ByteArrayInputStream(user.getProfilePictureUrl())));
-
       ContextMenu userMenu = new ContextMenu(image);
       userMenu.setOpenOnClick(true);
       userMenu.addItem("Logout", e -> securityUtils.logout());
@@ -191,8 +188,21 @@ public class MainLayout extends AppLayout {
 
       Button logoutButton = new Button("Logout", event -> securityUtils.logout());
       logoutButton.addClassNames("box-content", "ml-m", "mx-s");
+      logoutButton.getElement().getStyle().set("margin-left", "auto");
 
-      layout.add(image, name, logoutButton);
+      if (user.getProfilePictureUrl() == null || user.getProfilePictureUrl().length <= 0){
+        Avatar avatar = new Avatar(user.getUsername());
+        avatar.getStyle().set("border-radius", "12px");
+        avatar.getStyle().set("margin-right", "10px");
+
+        layout.add(avatar, name, logoutButton);
+      } else {
+        image.getElement().setAttribute("src",
+            new StreamResource(" ",
+                () -> new ByteArrayInputStream(user.getProfilePictureUrl())));
+
+        layout.add(image, name, logoutButton);
+      }
 
     } else {
       Button loginButton = new Button("Login", event -> navigateToLoginView());

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vaadin.fusion.Nonnull;
 import java.time.Instant;
 import java.util.Set;
+import javax.annotation.RegEx;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,7 +47,7 @@ public class User {
     @Size(min = 8, max = 64, message = "Password must be 8-64 char long")
     private String password;
 
-    // todo: regex password
+    @Pattern(regexp = "^\\d{9}$", message = "Provide 9 digits number.")
     @NotBlank(message = "Provide phone number.")
     private String phoneNumber;
 

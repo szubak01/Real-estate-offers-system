@@ -7,6 +7,7 @@ import com.example.application.views.signup.SignUpForm;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Optional;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,4 +47,7 @@ public class UserService extends CrudService<User, Integer> {
     }
 
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

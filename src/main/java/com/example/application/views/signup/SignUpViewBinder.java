@@ -32,6 +32,9 @@ public class SignUpViewBinder {
     BeanValidationBinder<User> binder = new BeanValidationBinder<>(User.class);
     binder.bindInstanceFields(signUpForm);
 
+    binder.forField(signUpForm.getUsername())
+        .withValidator(this::usernameValidator).bind("username");
+
     // Custom validator for password fields
     binder.forField(signUpForm.getPassword())
         .withValidator(this::passwordValidator).bind("password");
@@ -52,6 +55,7 @@ public class SignUpViewBinder {
         User user = new User();
         //Run validators and write the values to the bean
         binder.writeBean(user);
+
         userService.signUp(signUpForm);
         showSuccess();
       } catch (ValidationException | IOException validationException) {
@@ -60,6 +64,19 @@ public class SignUpViewBinder {
         validationException.printStackTrace();
       }
     });
+  }
+
+  // Checks if provided username is already in db
+  private ValidationResult usernameValidator(String username, ValueContext valueContext) {
+
+    String providedUsername = signUpForm.getUsername().getValue();
+    User user = userService.findByUsername(providedUsername);
+
+    if (user != null){
+      return ValidationResult.error("This username is already taken.");
+    } else {
+      return ValidationResult.ok();
+    }
   }
 
   // Method to validate should check
