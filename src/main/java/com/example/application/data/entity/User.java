@@ -4,6 +4,7 @@ import com.example.application.data.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vaadin.fusion.Nonnull;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 import javax.annotation.RegEx;
 import javax.persistence.Column;
@@ -30,33 +31,37 @@ import lombok.Setter;
 @Entity
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Nonnull
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Nonnull
+  private Integer id;
 
-    @NotBlank(message = "Provide username.")
-    private String username;
+  @NotBlank(message = "Provide username.")
+  private String username;
 
-    // todo: regex email
-    @NotBlank(message = "Provide email.")
-    @Email(message = "Email must be properly formatted.\n    e.g. example@gmail.com")
-    private String email;
+  @NotBlank(message = "Provide email.")
+  @Email(message = "Email must be properly formatted.\n  e.g. example@gmail.com")
+  private String email;
 
-    @JsonIgnore
-    @Size(min = 8, max = 64, message = "Password must be 8-64 char long")
-    private String password;
+  @JsonIgnore
+  @Size(min = 8, max = 64, message = "Password must be 8-64 char long")
+  private String password;
 
-    @Pattern(regexp = "^\\d{9}$", message = "Provide 9 digits number.")
-    @NotBlank(message = "Provide phone number.")
-    private String phoneNumber;
+  @Pattern(regexp = "^\\d{9}$", message = "Provide 9 digits number.")
+  @NotBlank(message = "Provide phone number.")
+  private String phoneNumber;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+  @ElementCollection(fetch = FetchType.EAGER)
+  private Set<Role> roles;
 
-    @Lob
-    private byte[] profilePictureUrl;
+  @Lob
+  private byte[] profilePictureUrl;
 
-    private Instant createdAt;
+  private Instant createdAt;
 
+  //Additional info
+  private String firstName;
+  private String lastName;
+  private LocalDate dateOfBirth;
+  private String city;
 }

@@ -7,8 +7,10 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class UploadImageForm extends Div {
 
   MemoryBuffer buffer = new MemoryBuffer();

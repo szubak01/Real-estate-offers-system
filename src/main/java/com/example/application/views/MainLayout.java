@@ -4,7 +4,8 @@ import com.example.application.data.entity.User;
 import com.example.application.security.SecurityUtils;
 import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.admin.AdminView;
-import com.example.application.views.rentaloffers.RentaloffersView;
+import com.example.application.views.profile.ProfileView;
+import com.example.application.views.rentaloffers.RentalOffersView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -130,9 +131,15 @@ public class MainLayout extends AppLayout {
 
   private List<RouterLink> createLinks() {
     MenuItemInfo[] menuItems = new MenuItemInfo[]{ //
-        new MenuItemInfo("Rental offers", "la la-arrow-circle-right", RentaloffersView.class), //
+        new MenuItemInfo("Rental offers", "la la-arrow-circle-right", RentalOffersView.class),
 
-        new MenuItemInfo("Admin", "la la-columns", AdminView.class), //
+//        new MenuItemInfo("My offers", "la la-bar-chart", ProfileView.class),
+//
+//        new MenuItemInfo("Reservations", "la la-bell", ProfileView.class),
+
+        new MenuItemInfo("Profile", "la la-user", ProfileView.class),
+
+        new MenuItemInfo("Admin", "la la-columns", AdminView.class),
 
     };
 
@@ -190,7 +197,7 @@ public class MainLayout extends AppLayout {
       logoutButton.addClassNames("box-content", "ml-m", "mx-s");
       logoutButton.getElement().getStyle().set("margin-left", "auto");
 
-      if (user.getProfilePictureUrl() == null || user.getProfilePictureUrl().length <= 0){
+      if (user.getProfilePictureUrl() == null || user.getProfilePictureUrl().length <= 0) {
         Avatar avatar = new Avatar(user.getUsername());
         avatar.getStyle().set("border-radius", "12px");
         avatar.getStyle().set("margin-right", "10px");

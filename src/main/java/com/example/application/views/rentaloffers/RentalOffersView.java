@@ -14,9 +14,9 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @Route(value = "rentaloffers", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @AnonymousAllowed
-public class RentaloffersView extends VerticalLayout {
+public class RentalOffersView extends VerticalLayout {
 
-    public RentaloffersView() {
+    public RentalOffersView() {
         setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");

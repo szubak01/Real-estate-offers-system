@@ -14,17 +14,17 @@ import java.io.IOException;
 
 public class SignUpViewBinder {
 
-  private final SignUpForm signUpForm;
-  private final UserService userService;
-
-  //Flag for disabling first run for password validation
-  private boolean enablePasswordValidation;
-
   public SignUpViewBinder(SignUpForm signUpForm,
       UserService userService) {
     this.signUpForm = signUpForm;
     this.userService = userService;
   }
+
+  private final SignUpForm signUpForm;
+  private final UserService userService;
+
+  //Flag for disabling first run for password validation
+  private boolean enablePasswordValidation;
 
   //Method to add the data binding and validation logics
   //to the signUp form
@@ -113,4 +113,5 @@ public class SignUpViewBinder {
 
     UI.getCurrent().getPage().setLocation(SecurityConfiguration.LOGIN_URL);
   }
+
 }
