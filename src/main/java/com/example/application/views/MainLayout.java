@@ -4,6 +4,7 @@ import com.example.application.data.entity.User;
 import com.example.application.security.SecurityUtils;
 import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.admin.AdminView;
+import com.example.application.views.myoffers.MyOffersView;
 import com.example.application.views.profile.ProfileView;
 import com.example.application.views.rentaloffers.RentalOffersView;
 import com.vaadin.flow.component.Component;
@@ -133,7 +134,7 @@ public class MainLayout extends AppLayout {
     MenuItemInfo[] menuItems = new MenuItemInfo[]{ //
         new MenuItemInfo("Rental offers", "la la-arrow-circle-right", RentalOffersView.class),
 
-//        new MenuItemInfo("My offers", "la la-bar-chart", ProfileView.class),
+        new MenuItemInfo("My offers", "la la-bar-chart", MyOffersView.class),
 //
 //        new MenuItemInfo("Reservations", "la la-bell", ProfileView.class),
 
