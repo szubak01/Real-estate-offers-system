@@ -1,7 +1,11 @@
 package com.example.application.views.myoffers;
 
+import com.example.application.data.enums.OfferType;
 import com.example.application.views.MainLayout;
+import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Div;
@@ -12,6 +16,7 @@ import com.vaadin.flow.component.html.Section;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
@@ -36,12 +41,14 @@ public class MyOffersView extends Div {
   private VerticalLayout addNewOfferContent;
 
   //Basic info fields
-  RadioButtonGroup<String> radioGroup;
+  private Select<OfferType> offerTypeSelect;
   private TextField offerTitle;
   private NumberField pricePerMonth;
+  private NumberField rent;
   private NumberField deposit;
   private NumberField livingArea;
-  private NumberField rooms;
+  private NumberField numberOfRooms;
+  private Select<String> typeOfRoom;
 
 
   public MyOffersView() {
@@ -120,19 +127,37 @@ public class MyOffersView extends Div {
     Div plnSuffix = new Div();
     plnSuffix.setText("PLN");
 
+    Div plnSuffix2 = new Div();
+    plnSuffix2.setText("PLN");
+
+    Div plnSuffix3 = new Div();
+    plnSuffix3.setText("PLN");
+
     Div squareMeter = new Div();
     squareMeter.setText("m²");
 
-    radioGroup = new RadioButtonGroup<>();
-    radioGroup.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
-    radioGroup.setLabel("Choose type of an offer:");
-    radioGroup.setItems("Rent an apartment", "Rent a room");
+    offerTypeSelect = new Select<>();
+    offerTypeSelect.setLabel("Select type of an offer");
+    offerTypeSelect.setItems(OfferType.values());
+    offerTypeSelect.setValue(OfferType.Apartment);
+    offerTypeSelect.addValueChangeListener(
+        (ValueChangeListener<ComponentValueChangeEvent<Select<OfferType>, OfferType>>) valueChange -> {
+          if (valueChange.getValue().equals(OfferType.Room)) {
+            layout.add(typeOfRoom);
+          } else {
+            layout.remove(typeOfRoom);
+          }
+        });
 
     offerTitle = new TextField("Offer title");
 
     pricePerMonth = new NumberField("Price per month");
-    pricePerMonth.setSuffixComponent(plnSuffix);
+    pricePerMonth.setSuffixComponent(plnSuffix2);
     pricePerMonth.setMin(0);
+
+    rent = new NumberField("Rent (additional)");
+    rent.setSuffixComponent(plnSuffix3);
+    rent.setMin(0);
 
     deposit = new NumberField("Deposit");
     deposit.setSuffixComponent(plnSuffix);
@@ -142,7 +167,12 @@ public class MyOffersView extends Div {
     livingArea.setSuffixComponent(squareMeter);
     livingArea.setMin(1);
 
-    rooms = new NumberField("Number of rooms");
+    numberOfRooms = new NumberField("Number of rooms in apartment");
+    numberOfRooms.setMin(1);
+
+    typeOfRoom = new Select<>();
+    typeOfRoom.setLabel("Type of room");
+    typeOfRoom.setItems("Single", "Double", "Triple");
 
     layout.setColspan(offerTitle, 3);
     layout.setResponsiveSteps(
@@ -150,8 +180,13 @@ public class MyOffersView extends Div {
         new ResponsiveStep("500px", 3)
     );
 
+    layout.add(
+        offerTypeSelect,
+        offerTitle,
+        pricePerMonth, rent, deposit,
+        livingArea, numberOfRooms
+    );
 
-    layout.add(radioGroup, offerTitle, pricePerMonth, deposit);
     return layout;
   }
 
