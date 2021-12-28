@@ -3,7 +3,6 @@ package com.example.application.views;
 import com.example.application.data.entity.User;
 import com.example.application.security.SecurityUtils;
 import com.example.application.security.SecurityConfiguration;
-import com.example.application.views.admin.AdminView;
 import com.example.application.views.myoffers.MyOffersView;
 import com.example.application.views.profile.ProfileView;
 import com.example.application.views.rentaloffers.RentalOffersView;
@@ -140,7 +139,7 @@ public class MainLayout extends AppLayout {
 
         new MenuItemInfo("Profile", "la la-user", ProfileView.class),
 
-        new MenuItemInfo("Admin", "la la-columns", AdminView.class),
+//        new MenuItemInfo("Admin", "la la-columns", AdminView.class),
 
     };
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vaadin.fusion.Nonnull;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.RegEx;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -64,4 +66,7 @@ public class User {
   private String lastName;
   private LocalDate dateOfBirth;
   private String city;
+
+  @OneToMany(mappedBy = "user")
+  private List<Offer> offers;
 }

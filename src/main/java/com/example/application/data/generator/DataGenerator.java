@@ -2,9 +2,7 @@ package com.example.application.data.generator;
 
 import com.example.application.data.Role;
 import com.example.application.data.entity.User;
-import com.example.application.data.entity.Users;
 import com.example.application.data.repository.UserRepository;
-import com.example.application.data.repository.UsersRepository;
 import com.vaadin.exampledata.DataType;
 import com.vaadin.exampledata.ExampleDataGenerator;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -20,8 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class DataGenerator {
 
     @Bean
-    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository,
-            UsersRepository usersRepository) {
+    public CommandLineRunner loadData(PasswordEncoder passwordEncoder, UserRepository userRepository) {
 
         return args -> {
             Logger logger = LoggerFactory.getLogger(getClass());
@@ -42,7 +39,6 @@ public class DataGenerator {
             user.setRoles(Collections.singleton(Role.USER));
             userRepository.save(user);
 
-
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin"));
@@ -51,17 +47,6 @@ public class DataGenerator {
             admin.setRoles(Collections.singleton(Role.ADMIN));
             userRepository.save(admin);
 
-
-            logger.info("... generating 100 Users entities...");
-            ExampleDataGenerator<Users> usersRepositoryGenerator = new ExampleDataGenerator<>(Users.class,
-                    LocalDateTime.of(2021, 11, 29, 0, 0, 0));
-            usersRepositoryGenerator.setData(Users::setId, DataType.ID);
-            usersRepositoryGenerator.setData(Users::setUsername, DataType.FIRST_NAME);
-            usersRepositoryGenerator.setData(Users::setPassword, DataType.WORD);
-            usersRepositoryGenerator.setData(Users::setEmail, DataType.EMAIL);
-            usersRepositoryGenerator.setData(Users::setPhone, DataType.PHONE_NUMBER);
-            usersRepositoryGenerator.setData(Users::setDateOfBirth, DataType.DATE_OF_BIRTH);
-            usersRepository.saveAll(usersRepositoryGenerator.create(100, seed));
 
             logger.info("Generated demo data");
         };

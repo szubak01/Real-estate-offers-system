@@ -1,11 +1,15 @@
 package com.example.application.views.myoffers;
 
 import com.example.application.data.enums.OfferType;
+import com.example.application.data.service.LocationService;
+import com.example.application.data.service.OfferService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.HasValueAndElement;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Div;
@@ -13,8 +17,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Section;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.richtexteditor.RichTextEditor;
 import com.vaadin.flow.component.select.Select;
@@ -23,8 +26,6 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import java.util.stream.Stream;
@@ -38,6 +39,9 @@ import lombok.Getter;
 @Getter
 public class MyOffersView extends Div {
 
+  private final OfferService offerService;
+  private final LocationService locationService;
+
   private final Tab listOfOffersTab;
   private final Tab addNewOfferTab;
   private final VerticalLayout content;
@@ -45,27 +49,35 @@ public class MyOffersView extends Div {
   private VerticalLayout addNewOfferContent;
 
   // Basic info fields
-  private Select<OfferType> offerTypeSelect;
-  private TextField offerTitle;
-  private NumberField pricePerMonth;
-  private NumberField rent;
-  private NumberField deposit;
-  private NumberField livingArea;
-  private NumberField numberOfRooms;
-  private Select<String> typeOfRoom;
-  private RichTextEditor description;
+  private Select<OfferType> offerTypeSelect = new Select<>();
+  private TextField offerTitle = new TextField("Offer title");
+  private NumberField pricePerMonth = new NumberField("Price per month");
+  private NumberField rent = new NumberField("Rent (additional)");
+  private NumberField deposit = new NumberField("Deposit");
+  private NumberField livingArea = new NumberField("Living area");
+  private NumberField numberOfRooms = new NumberField("Number of rooms in apartment");
+  private Select<String> typeOfRoom = new Select<>();
+  private RichTextEditor description = new RichTextEditor();
 
   // Location fields
-  private TextField city;
-  private TextField voivodeship;
-  private TextField streetAndNumber;
-  private TextField postalCode;
+  private TextField city = new TextField("City");
+  private TextField voivodeship = new TextField("Voivodeship");
+  private TextField streetNumber = new TextField("Street & number");
+  private TextField postalCode = new TextField("Postal code");
 
-  // Upload area
-  MultiFileMemoryBuffer multiFileMemoryBuffer;
-  Upload multiFileUpload;
+  private Button addOfferButton = new Button("Add offer");
 
-  public MyOffersView() {
+  MultiUploadForm multiUpload = new MultiUploadForm();
+
+  private final Span errorValidationMessage = new Span();
+
+  public MyOffersView(OfferService offerService,
+      LocationService locationService) {
+    this.offerService = offerService;
+    this.locationService = locationService;
+
+    OfferFormValidator validator = new OfferFormValidator(this, offerService);
+    validator.formValidation();
 
     listOfOffersTab = new Tab("List of offers");
     addNewOfferTab = new Tab("Add new offer");
@@ -79,6 +91,12 @@ public class MyOffersView extends Div {
     content = new VerticalLayout();
     content.setSpacing(false);
     setContent(tabs.getSelectedTab());
+
+    setRequiredIndicatorVisible(
+        offerTypeSelect, offerTitle, pricePerMonth, rent, deposit,
+        livingArea, numberOfRooms, typeOfRoom, city, voivodeship,
+        streetNumber, postalCode
+    );
 
     add(tabs, content);
   }
@@ -114,7 +132,6 @@ public class MyOffersView extends Div {
         "px-l"  // horizontal padding
     );
 
-
     addNewOfferContent.add(createMainSection());
     return addNewOfferContent;
   }
@@ -144,7 +161,6 @@ public class MyOffersView extends Div {
     Hr separator3 = new Hr();
     separator3.addClassNames("bg-primary", "flex-grow", "max-w-full");
 
-    description = new RichTextEditor();
     description.addClassNames("flex-grow", "pl-0", "m-0", "mt-s");
 
     H2 uploadTitle = new H2("Upload images");
@@ -153,17 +169,22 @@ public class MyOffersView extends Div {
     Hr separator4 = new Hr();
     separator4.addClassNames("bg-primary", "flex-grow", "max-w-full");
 
+    addOfferButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    addOfferButton.addClassNames("mt-xl");
+
 
     mainSection.add(
         mainTitle, paragraph, separator,
         createBasicInfoForm(),
-        locationTitle, separator2,
-        createLocationForm(),
         descriptionTitle, separator3,
         description,
+        locationTitle, separator2,
+        createLocationForm(),
         uploadTitle, separator4,
-        createImageUploadArea()
-        );
+        multiUpload,
+        createAddOfferButton(),
+        errorValidationMessage
+    );
     return mainSection;
   }
 
@@ -182,7 +203,6 @@ public class MyOffersView extends Div {
     Div squareMeter = new Div();
     squareMeter.setText("m²");
 
-    offerTypeSelect = new Select<>();
     offerTypeSelect.setLabel("Select type of an offer");
     offerTypeSelect.setItems(OfferType.values());
     offerTypeSelect.setValue(OfferType.Apartment);
@@ -195,35 +215,22 @@ public class MyOffersView extends Div {
           }
         });
 
-    offerTitle = new TextField("Offer title");
-
-    pricePerMonth = new NumberField("Price per month");
     pricePerMonth.setSuffixComponent(plnSuffix2);
     pricePerMonth.setMin(0);
 
-    rent = new NumberField("Rent (additional)");
     rent.setSuffixComponent(plnSuffix3);
     rent.setMin(0);
 
-    deposit = new NumberField("Deposit");
     deposit.setSuffixComponent(plnSuffix);
     deposit.setMin(0);
 
-    livingArea = new NumberField("Living area");
     livingArea.setSuffixComponent(squareMeter);
     livingArea.setMin(1);
 
-    numberOfRooms = new NumberField("Number of rooms in apartment");
     numberOfRooms.setMin(1);
 
-    typeOfRoom = new Select<>();
     typeOfRoom.setLabel("Type of room");
     typeOfRoom.setItems("Single", "Double", "Triple");
-
-    setRequiredIndicatorVisible(
-        offerTypeSelect, offerTitle, pricePerMonth, rent, deposit,
-        livingArea, numberOfRooms, typeOfRoom
-    );
 
     layout.setColspan(offerTitle, 3);
     layout.setResponsiveSteps(
@@ -245,56 +252,23 @@ public class MyOffersView extends Div {
     FormLayout layout = new FormLayout();
     layout.addClassNames("pt-s", "flex-grow", "max-w-full");
 
-    city = new TextField("City");
-    voivodeship = new TextField("Voivodeship");
-    streetAndNumber = new TextField("Street & number");
-    postalCode = new TextField("Postal code");
-
-
     layout.setResponsiveSteps(
         new ResponsiveStep("0", 1),
         new ResponsiveStep("500px", 4)
     );
 
     layout.add(
-        city, voivodeship, streetAndNumber, postalCode
+        city, voivodeship, streetNumber, postalCode
     );
     return layout;
   }
 
-  private Component createImageUploadArea(){
-    FormLayout layout = new FormLayout();
 
-    multiFileMemoryBuffer = new MultiFileMemoryBuffer();
-    multiFileUpload = new Upload(multiFileMemoryBuffer);
-    multiFileUpload.addClassNames("box-border");
-    multiFileUpload.setAcceptedFileTypes("image/*");
-    multiFileUpload.addFileRejectedListener(event -> {
-          String errorMessage = event.getErrorMessage();
+  private Component createAddOfferButton() {
+    addOfferButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    addOfferButton.addClassNames("mt-xl");
 
-          Notification notification = Notification.show(
-              errorMessage,
-              3500,
-              Notification.Position.MIDDLE
-          );
-          notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        });
-
-
-    Paragraph hint = new Paragraph("Accepted file formats: (.png), (.jpg/.jpeg)");
-    hint.getStyle().set("color", "var(--lumo-secondary-text-color)");
-    hint.getStyle().set("margin-top", "15px");
-
-
-    layout.setColspan(multiFileUpload, 4);
-    layout.setColspan(hint, 4);
-    layout.setResponsiveSteps(
-        new ResponsiveStep("0", 1),
-        new ResponsiveStep("500px", 4)
-    );
-
-    layout.add(hint, multiFileUpload);
-    return layout;
+    return addOfferButton;
   }
 
   private void setRequiredIndicatorVisible(HasValueAndElement<?, ?>... components) {
