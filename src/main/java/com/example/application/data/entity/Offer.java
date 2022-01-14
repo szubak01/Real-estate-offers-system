@@ -2,23 +2,29 @@ package com.example.application.data.entity;
 
 import com.example.application.data.enums.OfferType;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -45,16 +51,18 @@ public class Offer {
   @NotBlank(message = "Cannot be empty")
   private String description;
 
-  @ElementCollection
-  private Set<String> offerImages;
+  private Instant createdAt;
+  private Instant updatedAt;
 
   @OneToOne
-  @JoinColumn(name = "location_id", referencedColumnName = "id")
+  @JoinColumn(name = "location_id")
   private Location location;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  private Instant createdAt;
+  @OneToMany(fetch = FetchType.EAGER)
+  private List<Images> images;
+
 }

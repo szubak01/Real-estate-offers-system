@@ -1,5 +1,8 @@
 package com.example.application.views.myoffers;
 
+import com.example.application.data.entity.Images;
+import com.example.application.data.entity.Location;
+import com.example.application.data.entity.Offer;
 import com.example.application.data.enums.OfferType;
 import com.example.application.data.service.LocationService;
 import com.example.application.data.service.OfferService;
@@ -8,6 +11,7 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.HasValueAndElement;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -15,9 +19,12 @@ import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Hr;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Section;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.richtexteditor.RichTextEditor;
 import com.vaadin.flow.component.select.Select;
@@ -28,15 +35,19 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.security.RolesAllowed;
 import lombok.Getter;
+import lombok.Setter;
 
 
 @PageTitle("My offers")
 @Route(value = "myOffers", layout = MainLayout.class)
 @RolesAllowed("user")
 @Getter
+@Setter
 public class MyOffersView extends Div {
 
   private final OfferService offerService;
@@ -48,27 +59,38 @@ public class MyOffersView extends Div {
   private VerticalLayout listOfOffersContent;
   private VerticalLayout addNewOfferContent;
 
+  private HorizontalLayout card;
+
+  Button deleteButton;
+  Button updateButton;
+  VerticalLayout leftTab;
+
+  // Update mode layout
+  VerticalLayout updateContent;
+
+  // Update Mode Buttons
+  private final Button saveChangesButton = new Button("Save changes");
+  private final Button cancelUpdateButton = new Button("Cancel");
+
   // Basic info fields
-  private Select<OfferType> offerTypeSelect = new Select<>();
-  private TextField offerTitle = new TextField("Offer title");
-  private NumberField pricePerMonth = new NumberField("Price per month");
-  private NumberField rent = new NumberField("Rent (additional)");
-  private NumberField deposit = new NumberField("Deposit");
-  private NumberField livingArea = new NumberField("Living area");
-  private NumberField numberOfRooms = new NumberField("Number of rooms in apartment");
-  private Select<String> typeOfRoom = new Select<>();
-  private RichTextEditor description = new RichTextEditor();
+  private final Select<OfferType> offerTypeSelect = new Select<>();
+  private final TextField offerTitle = new TextField("Offer title");
+  private final NumberField pricePerMonth = new NumberField("Price per month");
+  private final NumberField rent = new NumberField("Rent (additional)");
+  private final NumberField deposit = new NumberField("Deposit");
+  private final NumberField livingArea = new NumberField("Living area");
+  private final NumberField numberOfRooms = new NumberField("Number of rooms in apartment");
+  private final Select<String> typeOfRoom = new Select<>();
+  private final RichTextEditor description = new RichTextEditor();
 
   // Location fields
-  private TextField city = new TextField("City");
-  private TextField voivodeship = new TextField("Voivodeship");
-  private TextField streetNumber = new TextField("Street & number");
-  private TextField postalCode = new TextField("Postal code");
+  private final TextField city = new TextField("City");
+  private final TextField voivodeship = new TextField("Voivodeship");
+  private final TextField streetNumber = new TextField("Street & number");
+  private final TextField postalCode = new TextField("Postal code");
 
-  private Button addOfferButton = new Button("Add offer");
-
-  MultiUploadForm multiUpload = new MultiUploadForm();
-
+  private final Button addOfferButton = new Button("Add offer");
+  MultiUploadForm multiUpload;
   private final Span errorValidationMessage = new Span();
 
   public MyOffersView(OfferService offerService,
@@ -105,26 +127,16 @@ public class MyOffersView extends Div {
     content.removeAll();
 
     if (tab.equals(listOfOffersTab)) {
-      content.add(createListOfOffersContent());
+      content.add(offersListContent());
     } else {
       content.add(createAddNewOfferContent());
     }
-  }
-
-  private VerticalLayout createListOfOffersContent() {
-    listOfOffersContent = new VerticalLayout();
-
-    listOfOffersContent.add();
-
-    return listOfOffersContent;
   }
 
   private VerticalLayout createAddNewOfferContent() {
     addNewOfferContent = new VerticalLayout();
     addNewOfferContent.addClassNames(
         "grid",  // display
-        "gap-l", // space between items in a flexbox or grid layout
-        //"items-start",
         "justify-center",
         "max-w-screen-lg", // sets the maximum width of an element to 1024px
         "mx-auto", // horizontal margin
@@ -132,11 +144,6 @@ public class MyOffersView extends Div {
         "px-l"  // horizontal padding
     );
 
-    addNewOfferContent.add(createMainSection());
-    return addNewOfferContent;
-  }
-
-  private Component createMainSection() {
     Section mainSection = new Section();
     mainSection.addClassNames("flex", "flex-grow", "flex-col");
 
@@ -172,24 +179,10 @@ public class MyOffersView extends Div {
     addOfferButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     addOfferButton.addClassNames("mt-xl");
 
+    multiUpload = new MultiUploadForm();
 
-    mainSection.add(
-        mainTitle, paragraph, separator,
-        createBasicInfoForm(),
-        descriptionTitle, separator3,
-        description,
-        locationTitle, separator2,
-        createLocationForm(),
-        uploadTitle, separator4,
-        multiUpload,
-        createAddOfferButton(),
-        errorValidationMessage
-    );
-    return mainSection;
-  }
-
-  private Component createBasicInfoForm() {
-    FormLayout layout = new FormLayout();
+    //Basic info form
+    FormLayout basicInfoLayout = new FormLayout();
 
     Div plnSuffix = new Div();
     plnSuffix.setText("PLN");
@@ -208,10 +201,17 @@ public class MyOffersView extends Div {
     offerTypeSelect.setValue(OfferType.Apartment);
     offerTypeSelect.addValueChangeListener(
         (ValueChangeListener<ComponentValueChangeEvent<Select<OfferType>, OfferType>>) valueChange -> {
-          if (valueChange.getValue().equals(OfferType.Room)) {
-            layout.add(typeOfRoom);
-          } else {
-            layout.remove(typeOfRoom);
+          try {
+            if (valueChange.getValue() == null) {
+              offerTypeSelect.setValue(OfferType.Apartment);
+            } else if (valueChange.getValue().equals(OfferType.Room)) {
+              basicInfoLayout.add(typeOfRoom);
+            } else {
+              basicInfoLayout.remove(typeOfRoom);
+            }
+          } catch (IllegalArgumentException exc) {
+            UI.getCurrent().getPage().reload();
+            exc.printStackTrace();
           }
         });
 
@@ -232,43 +232,196 @@ public class MyOffersView extends Div {
     typeOfRoom.setLabel("Type of room");
     typeOfRoom.setItems("Single", "Double", "Triple");
 
-    layout.setColspan(offerTitle, 3);
-    layout.setResponsiveSteps(
+    basicInfoLayout.setColspan(offerTitle, 3);
+    basicInfoLayout.setResponsiveSteps(
         new ResponsiveStep("0", 1),
         new ResponsiveStep("500px", 3)
     );
 
-    layout.add(
+    basicInfoLayout.add(
         offerTypeSelect,
         offerTitle,
         pricePerMonth, rent, deposit,
         livingArea, numberOfRooms
     );
 
-    return layout;
-  }
+    // Location form
+    FormLayout locationFormLayout = new FormLayout();
+    locationFormLayout.addClassNames("pt-s", "flex-grow", "max-w-full");
 
-  private Component createLocationForm() {
-    FormLayout layout = new FormLayout();
-    layout.addClassNames("pt-s", "flex-grow", "max-w-full");
-
-    layout.setResponsiveSteps(
+    locationFormLayout.setResponsiveSteps(
         new ResponsiveStep("0", 1),
         new ResponsiveStep("500px", 4)
     );
 
-    layout.add(
+    locationFormLayout.add(
         city, voivodeship, streetNumber, postalCode
     );
-    return layout;
+
+    addNewOfferContent.add(
+        mainTitle, paragraph, separator,
+        basicInfoLayout,
+        descriptionTitle, separator3,
+        description,
+        locationTitle, separator2,
+        locationFormLayout,
+        uploadTitle, separator4,
+        multiUpload,
+        addOfferButton,
+        errorValidationMessage
+    );
+
+    return addNewOfferContent;
   }
 
+  private Component offersListContent() {
+    leftTab = new VerticalLayout();
 
-  private Component createAddOfferButton() {
-    addOfferButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-    addOfferButton.addClassNames("mt-xl");
+    List<Offer> offers = offerService.getOffersOwnedByCurrentUser();
 
-    return addOfferButton;
+    leftTab.setSizeFull();
+    leftTab.setAlignItems(Alignment.CENTER);
+    leftTab.setAlignSelf(Alignment.CENTER);
+    leftTab.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+    leftTab.addClassNames("grid", "gap-s", "justify-center", "mx-auto", "pb-l", "px-l");
+
+    if (offers.isEmpty()) {
+
+      leftTab.add(new H2("You don't have any offers."));
+      leftTab.add(new Paragraph("If you decide to add an offer, it will be displayed here."));
+      getStyle().set("text-align", "center");
+
+    } else {
+
+      for (Offer offer : offers) {
+        leftTab.add(createCard(offer));
+      }
+    }
+
+    leftTab.add();
+    return leftTab;
+  }
+
+  private HorizontalLayout createCard(Offer offer) {
+    card = new HorizontalLayout();
+    card.addClassNames("bg-base", "rounded-l", "p-s", "justify-center", "mr-l", "ml-l", "border", "border-primary");
+    card.getStyle().set("border-width", "2px");
+
+    Optional<Images> maybeImage = offer.getImages().stream().findFirst();
+
+    Image image = new Image();
+    image.setMaxWidth("15%");
+    image.addClassNames("rounded-l");
+
+    if (maybeImage.isPresent()) {
+
+      // todo: retrieve image from database and display it in a card
+
+    } else {
+      image.setSrc("images/default_image.png");
+    }
+
+    FormLayout description = new FormLayout();
+    description.setMaxWidth("70%");
+    description.addClassNames("overflow-hidden");
+
+    Span title = new Span(offer.getOfferTitle());
+    description.addFormItem(title, "Title:");
+
+    Span offerType = new Span(offer.getOfferTypeSelect().getOfferType());
+    description.addFormItem(offerType, "Offer type:");
+
+    Span pricePerMonth = new Span(offer.getPricePerMonth().toString() + " PLN");
+    description.addFormItem(pricePerMonth, "Price per month:");
+
+    Span livingArea = new Span(offer.getLivingArea().toString() + " m²");
+    description.addFormItem(livingArea, "Living area:");
+
+    String city = offer.getLocation().getCity();
+    String voivodeship = offer.getLocation().getVoivodeship();
+    String streetNumber = offer.getLocation().getStreetNumber();
+    String postalCode = offer.getLocation().getPostalCode();
+    Span address = new Span(city + " " + voivodeship + " " + streetNumber + " " + postalCode);
+    description.addFormItem(address, "Address:");
+
+    Span createdAt = new Span(offer.getCreatedAt().toString());
+    description.addFormItem(createdAt, "Date: ");
+
+    description.setResponsiveSteps(
+        new ResponsiveStep("0", 1),
+        new ResponsiveStep("500px", 2)
+    );
+
+    VerticalLayout buttons = new VerticalLayout();
+    buttons.addClassNames("m-l");
+    buttons.setMaxWidth("15%");
+
+    deleteButton = new Button("DELETE");
+    deleteButton.setWidthFull();
+    deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+    updateButton = new Button("UPDATE");
+    updateButton.setWidthFull();
+
+    buttons.add(updateButton, deleteButton);
+
+    deleteButton.addClickListener(event -> {
+      Integer offerId = offer.getId();
+      offerService.deleteOfferById(offerId);
+      leftTab.remove(this.card);
+      UI.getCurrent().getPage().reload();
+    });
+
+    updateButton.addClickListener(event -> {
+      switchToUpdateMode(offer);
+    });
+
+    card.add(image, description, buttons);
+    return card;
+  }
+
+  private void switchToUpdateMode(Offer offer) {
+    content.removeAll();
+
+    HorizontalLayout buttons = new HorizontalLayout();
+    buttons.add(saveChangesButton, cancelUpdateButton);
+
+    saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    saveChangesButton.addClickListener(event -> {
+      offerService.updateOffer(this, offer);
+      UI.getCurrent().getPage().reload();
+    });
+
+    cancelUpdateButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+    cancelUpdateButton.addClickListener(event -> UI.getCurrent().getPage().reload());
+
+    fillUpdateFields(offer);
+
+    updateContent = createAddNewOfferContent();
+    updateContent.remove(addOfferButton);
+    updateContent.add(buttons);
+
+    content.add(updateContent);
+  }
+
+  private void fillUpdateFields(Offer offer) {
+
+    offerTypeSelect.setValue(offer.getOfferTypeSelect());
+    offerTitle.setValue(offer.getOfferTitle());
+    pricePerMonth.setValue(offer.getPricePerMonth());
+    rent.setValue(offer.getRent());
+    deposit.setValue(offer.getDeposit());
+    livingArea.setValue(offer.getLivingArea());
+    numberOfRooms.setValue(offer.getNumberOfRooms());
+    typeOfRoom.setValue(offer.getTypeOfRoom());
+    description.setValue(offer.getDescription());
+
+    Location location = offer.getLocation();
+
+    city.setValue(location.getCity());
+    voivodeship.setValue(location.getVoivodeship());
+    streetNumber.setValue(location.getStreetNumber());
+    postalCode.setValue(location.getPostalCode());
   }
 
   private void setRequiredIndicatorVisible(HasValueAndElement<?, ?>... components) {

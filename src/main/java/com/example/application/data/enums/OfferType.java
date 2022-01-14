@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public enum OfferType {
 
-  Apartment("apartment"),
-  Room("room");
+  Apartment("Apartment"),
+  Room("Room");
 
   private final String offerType;
 
