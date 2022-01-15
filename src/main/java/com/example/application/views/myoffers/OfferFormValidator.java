@@ -10,6 +10,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
+import java.io.IOException;
 
 public class OfferFormValidator {
 
@@ -42,7 +43,7 @@ public class OfferFormValidator {
 
         offerService.saveOffer(myOffersView);
         showSuccessNotification();
-      } catch (ValidationException e) {
+      } catch (ValidationException | IOException e) {
         e.printStackTrace();
       }
     });

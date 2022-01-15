@@ -99,7 +99,6 @@ public class SignUpForm extends FormLayout {
   }
 
   private void responsiveFormLayout() {
-    // max width of the form
     setMaxWidth("500px");
 
     // Allow the form layout to be responsive

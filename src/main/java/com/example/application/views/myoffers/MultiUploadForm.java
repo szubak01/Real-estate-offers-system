@@ -6,6 +6,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,9 +15,9 @@ import lombok.Setter;
 public class MultiUploadForm extends FormLayout {
 
   // Upload area
-  // MultiFileMemoryBuffer multiFileMemoryBuffer = new MultiFileMemoryBuffer();
-  MemoryBuffer buffer = new MemoryBuffer();
-  Upload multiFileUpload = new Upload(buffer);
+   MultiFileMemoryBuffer multiFileMemoryBuffer = new MultiFileMemoryBuffer();
+ // MemoryBuffer buffer = new MemoryBuffer();
+  Upload multiFileUpload = new Upload(multiFileMemoryBuffer);
 
   public MultiUploadForm() {
 

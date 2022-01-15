@@ -1,6 +1,6 @@
 package com.example.application.views.myoffers;
 
-import com.example.application.data.entity.Images;
+import com.example.application.data.entity.OfferImage;
 import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
 import com.example.application.data.enums.OfferType;
@@ -35,6 +35,10 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -93,6 +97,8 @@ public class MyOffersView extends Div {
   MultiUploadForm multiUpload;
   private final Span errorValidationMessage = new Span();
 
+  private List<OfferImage> offerImages;
+
   public MyOffersView(OfferService offerService,
       LocationService locationService) {
     this.offerService = offerService;
@@ -135,14 +141,8 @@ public class MyOffersView extends Div {
 
   private VerticalLayout createAddNewOfferContent() {
     addNewOfferContent = new VerticalLayout();
-    addNewOfferContent.addClassNames(
-        "grid",  // display
-        "justify-center",
-        "max-w-screen-lg", // sets the maximum width of an element to 1024px
-        "mx-auto", // horizontal margin
-        "pb-l",  // bottom margin
-        "px-l"  // horizontal padding
-    );
+    addNewOfferContent
+        .addClassNames("grid", "justify-center", "max-w-screen-lg", "mx-auto", "pb-l", "px-l");
 
     Section mainSection = new Section();
     mainSection.addClassNames("flex", "flex-grow", "flex-col");
@@ -181,7 +181,6 @@ public class MyOffersView extends Div {
 
     multiUpload = new MultiUploadForm();
 
-    //Basic info form
     FormLayout basicInfoLayout = new FormLayout();
 
     Div plnSuffix = new Div();
@@ -245,7 +244,6 @@ public class MyOffersView extends Div {
         livingArea, numberOfRooms
     );
 
-    // Location form
     FormLayout locationFormLayout = new FormLayout();
     locationFormLayout.addClassNames("pt-s", "flex-grow", "max-w-full");
 
@@ -298,24 +296,28 @@ public class MyOffersView extends Div {
       }
     }
 
-    leftTab.add();
     return leftTab;
   }
 
   private HorizontalLayout createCard(Offer offer) {
     card = new HorizontalLayout();
-    card.addClassNames("bg-base", "rounded-l", "p-s", "justify-center", "mr-l", "ml-l", "border", "border-primary");
+    card.addClassNames("bg-base", "rounded-l", "p-s", "justify-center", "mr-l", "ml-l", "border",
+        "border-primary");
     card.getStyle().set("border-width", "2px");
 
-    Optional<Images> maybeImage = offer.getImages().stream().findFirst();
+    offerImages = offerService.getOfferImages(offer);
 
     Image image = new Image();
     image.setMaxWidth("15%");
     image.addClassNames("rounded-l");
 
-    if (maybeImage.isPresent()) {
+    if (!offerImages.isEmpty()) {
+      String imageName = offerImages.stream().findFirst().get().getImageName();
+      byte[] imageBytes = offerImages.stream().findFirst().get().getImage();
 
-      // todo: retrieve image from database and display it in a card
+      StreamResource resource = new StreamResource(imageName,
+          () -> new ByteArrayInputStream(imageBytes));
+      image.setSrc(resource);
 
     } else {
       image.setSrc("images/default_image.png");
@@ -366,15 +368,17 @@ public class MyOffersView extends Div {
     buttons.add(updateButton, deleteButton);
 
     deleteButton.addClickListener(event -> {
-      Integer offerId = offer.getId();
-      offerService.deleteOfferById(offerId);
-      leftTab.remove(this.card);
+
+      if (offerService.offerHasImage(offer)) {
+        for (OfferImage img : offerImages) {
+          offerService.deleteOfferImageById(img.getId());
+        }
+      }
+      offerService.deleteOfferById(offer.getId());
       UI.getCurrent().getPage().reload();
     });
 
-    updateButton.addClickListener(event -> {
-      switchToUpdateMode(offer);
-    });
+    updateButton.addClickListener(event -> switchToUpdateMode(offer));
 
     card.add(image, description, buttons);
     return card;
@@ -417,7 +421,6 @@ public class MyOffersView extends Div {
     description.setValue(offer.getDescription());
 
     Location location = offer.getLocation();
-
     city.setValue(location.getCity());
     voivodeship.setValue(location.getVoivodeship());
     streetNumber.setValue(location.getStreetNumber());

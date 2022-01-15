@@ -1,21 +1,23 @@
 package com.example.application.data.service;
 
+import com.example.application.data.entity.OfferImage;
 import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
 import com.example.application.data.entity.User;
-import com.example.application.data.repository.ImagesRepository;
+import com.example.application.data.repository.OfferImageRepository;
 import com.example.application.data.repository.LocationRepository;
 import com.example.application.data.repository.OfferRepository;
 import com.example.application.security.SecurityUtils;
 import com.example.application.views.myoffers.MyOffersView;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -23,11 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class OfferService {
 
   private final OfferRepository offerRepository;
-  private final ImagesRepository imagesRepository;
+  private final OfferImageRepository offerImageRepository;
   private final LocationRepository locationRepository;
   private final SecurityUtils securityUtils;
 
-  public void saveOffer(MyOffersView view) {
+  public void saveOffer(MyOffersView view) throws IOException {
     User currentUser = securityUtils.getCurrentUser().get();
 
     Location location = mapLocationValuesFromView(view, new Location());
@@ -40,7 +42,25 @@ public class OfferService {
     offer.setLocation(location);
 
     offerRepository.save(offer);
-    log.info("New offer saved to database with ID: [" + offer.getId() + "] . Added by user with ID: " + offer.getUser().getId());
+    log.info(
+        "New offer saved to database with ID: [" + offer.getId() + "] . Added by user with ID: "
+            + offer.getUser().getId());
+
+    MultiFileMemoryBuffer buffer = view.getMultiUpload().getMultiFileMemoryBuffer();
+    Set<String> filesName = buffer.getFiles();
+
+    if (!filesName.isEmpty()) {
+      for (String name : filesName) {
+        byte[] imageBytes = buffer.getInputStream(name).readAllBytes();
+        OfferImage img = new OfferImage();
+        img.setOffer(offer);
+        img.setImage(imageBytes);
+        img.setImageName(name);
+        offerImageRepository.save(img);
+        log.info("Image for offer with ID: [" + offer.getId() + "] saved to database.");
+      }
+    }
+
   }
 
   public void updateOffer(MyOffersView view, Offer offer) {
@@ -53,7 +73,8 @@ public class OfferService {
     Location location = updatedOffer.getLocation();
     Location updatedLocation = mapLocationValuesFromView(view, location);
     locationRepository.save(updatedLocation);
-    log.info("Location updated for offer with ID: [" + updatedOffer.getId() + "] |  Location ID: [" + updatedLocation.getId() + "]");
+    log.info("Location updated for offer with ID: [" + updatedOffer.getId() + "] |  Location ID: ["
+        + updatedLocation.getId() + "]");
   }
 
   public void deleteOfferById(Integer offerId) {
@@ -61,8 +82,12 @@ public class OfferService {
     log.info("Offer with ID: [" + offerId + "] deleted.");
   }
 
+  public void deleteOfferImageById(Integer imageId) {
+    offerImageRepository.deleteById(imageId);
+    log.info("Image with ID: [" + imageId + "] has been deleted.");
+  }
 
-  public List<Offer> getOffersOwnedByCurrentUser(){
+  public List<Offer> getOffersOwnedByCurrentUser() {
     User currentUser = securityUtils.getCurrentUser().get();
     log.info("Offers for user with ID: [" + currentUser.getId() + "] retrieved from database.");
 
@@ -73,7 +98,16 @@ public class OfferService {
         .collect(Collectors.toList());
   }
 
-  private Offer mapOfferValuesFromView(MyOffersView view, Offer offer){
+  public List<OfferImage> getOfferImages(Offer offer) {
+    return offerImageRepository
+        .findAll()
+        .stream()
+        .filter(image -> image.getOffer().getId().equals(offer.getId()))
+        .collect(Collectors.toList());
+
+  }
+
+  private Offer mapOfferValuesFromView(MyOffersView view, Offer offer) {
     offer.setOfferTypeSelect(view.getOfferTypeSelect().getValue());
     offer.setOfferTitle(view.getOfferTitle().getValue());
     offer.setPricePerMonth(view.getPricePerMonth().getValue());
@@ -87,7 +121,7 @@ public class OfferService {
     return offer;
   }
 
-  private Location mapLocationValuesFromView(MyOffersView view, Location location){
+  private Location mapLocationValuesFromView(MyOffersView view, Location location) {
     location.setCity(view.getCity().getValue());
     location.setVoivodeship(view.getVoivodeship().getValue());
     location.setStreetNumber(view.getStreetNumber().getValue());
@@ -96,4 +130,7 @@ public class OfferService {
     return location;
   }
 
+  public boolean offerHasImage(Offer offer) {
+    return getOfferImages(offer).size() != 0;
+  }
 }

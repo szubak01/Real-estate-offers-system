@@ -3,16 +3,12 @@ package com.example.application.data.entity;
 import com.example.application.data.enums.OfferType;
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -63,6 +59,6 @@ public class Offer {
   private User user;
 
   @OneToMany(fetch = FetchType.EAGER)
-  private List<Images> images;
+  private List<OfferImage> images;
 
 }
