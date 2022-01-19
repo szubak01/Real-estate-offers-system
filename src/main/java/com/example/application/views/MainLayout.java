@@ -5,7 +5,7 @@ import com.example.application.security.SecurityUtils;
 import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.myoffers.MyOffersView;
 import com.example.application.views.profile.ProfileView;
-import com.example.application.views.rentaloffers.RentalOffersView;
+import com.example.application.views.mainview.MainView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -131,7 +131,7 @@ public class MainLayout extends AppLayout {
 
   private List<RouterLink> createLinks() {
     MenuItemInfo[] menuItems = new MenuItemInfo[]{ //
-        new MenuItemInfo("Rental offers", "la la-arrow-circle-right", RentalOffersView.class),
+        new MenuItemInfo("Rental offers", "la la-arrow-circle-right", MainView.class),
 
         new MenuItemInfo("My offers", "la la-bar-chart", MyOffersView.class),
 //

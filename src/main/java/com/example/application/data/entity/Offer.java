@@ -58,7 +58,7 @@ public class Offer {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY)
   private List<OfferImage> images;
 
 }

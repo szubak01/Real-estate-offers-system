@@ -13,6 +13,7 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -77,14 +78,14 @@ public class OfferService {
         + updatedLocation.getId() + "]");
   }
 
-  public void deleteOfferById(Integer offerId) {
-    offerRepository.deleteById(offerId);
-    log.info("Offer with ID: [" + offerId + "] deleted.");
-  }
-
   public void deleteOfferImageById(Integer imageId) {
     offerImageRepository.deleteById(imageId);
     log.info("Image with ID: [" + imageId + "] has been deleted.");
+  }
+
+  public void deleteOfferById(Integer offerId) {
+    offerRepository.deleteById(offerId);
+    log.info("Offer with ID: [" + offerId + "] deleted.");
   }
 
   public List<Offer> getOffersOwnedByCurrentUser() {
@@ -132,5 +133,13 @@ public class OfferService {
 
   public boolean offerHasImage(Offer offer) {
     return getOfferImages(offer).size() != 0;
+  }
+
+  public List<Offer> getAllOffers() {
+    return offerRepository.findAll();
+  }
+
+  public Offer getOfferById(Integer offerID) {
+    return offerRepository.getById(offerID);
   }
 }

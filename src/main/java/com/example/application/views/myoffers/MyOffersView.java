@@ -37,10 +37,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.security.RolesAllowed;
 import lombok.Getter;
@@ -71,6 +70,7 @@ public class MyOffersView extends Div {
 
   // Update mode layout
   VerticalLayout updateContent;
+  VerticalLayout cardButtons;
 
   // Update Mode Buttons
   private final Button saveChangesButton = new Button("Save changes");
@@ -346,7 +346,8 @@ public class MyOffersView extends Div {
     Span address = new Span(city + " " + voivodeship + " " + streetNumber + " " + postalCode);
     description.addFormItem(address, "Address:");
 
-    Span createdAt = new Span(offer.getCreatedAt().toString());
+    String date = offer.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString().replaceAll("[TZ]", " ").substring(0,11);
+    Span createdAt = new Span(date);
     description.addFormItem(createdAt, "Date: ");
 
     description.setResponsiveSteps(
@@ -354,33 +355,14 @@ public class MyOffersView extends Div {
         new ResponsiveStep("500px", 2)
     );
 
-    VerticalLayout buttons = new VerticalLayout();
-    buttons.addClassNames("m-l");
-    buttons.setMaxWidth("15%");
-
+    cardButtons = new VerticalLayout();
     deleteButton = new Button("DELETE");
-    deleteButton.setWidthFull();
-    deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-
     updateButton = new Button("UPDATE");
-    updateButton.setWidthFull();
 
-    buttons.add(updateButton, deleteButton);
+    cardButtons.add(updateButton, deleteButton);
+    cardButtonsHandler(offer);
 
-    deleteButton.addClickListener(event -> {
-
-      if (offerService.offerHasImage(offer)) {
-        for (OfferImage img : offerImages) {
-          offerService.deleteOfferImageById(img.getId());
-        }
-      }
-      offerService.deleteOfferById(offer.getId());
-      UI.getCurrent().getPage().reload();
-    });
-
-    updateButton.addClickListener(event -> switchToUpdateMode(offer));
-
-    card.add(image, description, buttons);
+    card.add(image, description, cardButtons);
     return card;
   }
 
@@ -425,6 +407,28 @@ public class MyOffersView extends Div {
     voivodeship.setValue(location.getVoivodeship());
     streetNumber.setValue(location.getStreetNumber());
     postalCode.setValue(location.getPostalCode());
+  }
+
+  private void cardButtonsHandler(Offer offer){
+    // listeners
+    deleteButton.addClickListener(event -> {
+      if (offerService.offerHasImage(offer)) {
+        for (OfferImage img : offerImages) {
+          offerService.deleteOfferImageById(img.getId());
+        }
+      }
+      offerService.deleteOfferById(offer.getId());
+      UI.getCurrent().getPage().reload();
+    });
+
+    updateButton.addClickListener(event -> switchToUpdateMode(offer));
+
+    // css
+    cardButtons.addClassNames("m-l");
+    cardButtons.setMaxWidth("15%");
+    deleteButton.setWidthFull();
+    deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+    updateButton.setWidthFull();
   }
 
   private void setRequiredIndicatorVisible(HasValueAndElement<?, ?>... components) {

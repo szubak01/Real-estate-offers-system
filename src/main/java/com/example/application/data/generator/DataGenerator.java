@@ -3,19 +3,31 @@ package com.example.application.data.generator;
 import com.example.application.data.Role;
 import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
+import com.example.application.data.entity.OfferImage;
 import com.example.application.data.entity.User;
 import com.example.application.data.enums.OfferType;
 import com.example.application.data.repository.LocationRepository;
+import com.example.application.data.repository.OfferImageRepository;
 import com.example.application.data.repository.OfferRepository;
 import com.example.application.data.repository.UserRepository;
 import com.vaadin.exampledata.DataType;
 import com.vaadin.exampledata.ExampleDataGenerator;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.spring.annotation.SpringComponent;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import javax.imageio.ImageIO;
+import org.apache.catalina.webresources.FileResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -30,7 +42,8 @@ public class DataGenerator {
         PasswordEncoder passwordEncoder,
         UserRepository userRepository,
         LocationRepository locationRepository,
-        OfferRepository offerRepository
+        OfferRepository offerRepository,
+        OfferImageRepository offerImageRepository
         ) {
 
         return args -> {
@@ -99,12 +112,23 @@ public class DataGenerator {
             o.setNumberOfRooms(3.0);
             o.setTypeOfRoom(" ");
             o.setDescription("Example Description for offer entity with all blahblalalalaalala");
-            //o.setOfferImages(imgs);
             o.setCreatedAt(Instant.now());
             o.setUser(user);
             o.setLocation(l);
 
             offerRepository.save(o);
+
+            BufferedImage bImage = ImageIO.read(
+                new File("src/main/resources/META-INF/resources/images/example_image.jpg"));
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "jpg", bos );
+            byte [] data = bos.toByteArray();
+
+            OfferImage offerImage = new OfferImage();
+            offerImage.setImageName("example_image.jpg");
+            offerImage.setImage(data);
+            offerImage.setOffer(o);
+            offerImageRepository.save(offerImage);
 
             Offer o2 = new Offer();
             o2.setOfferTypeSelect(OfferType.Apartment);
