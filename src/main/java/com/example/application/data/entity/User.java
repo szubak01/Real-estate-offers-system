@@ -1,14 +1,12 @@
 package com.example.application.data.entity;
 
-import com.example.application.data.Role;
+import com.example.application.data.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vaadin.fusion.Nonnull;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.RegEx;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,13 +14,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -70,4 +69,7 @@ public class User {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<Offer> offers;
+
+  @OneToMany(mappedBy = "user")
+  private Set<Reservation> reservations;
 }

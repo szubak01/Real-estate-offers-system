@@ -1,14 +1,18 @@
 package com.example.application.data.entity;
 
+import com.example.application.data.enums.OfferState;
 import com.example.application.data.enums.OfferType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -44,8 +48,11 @@ public class Offer {
   @NotNull(message = "Cannot be empty")
   private Double numberOfRooms;
   private String typeOfRoom;
+  @Column(length = Integer.MAX_VALUE)
   @NotBlank(message = "Cannot be empty")
   private String description;
+
+  private OfferState offerState;
 
   private Instant createdAt;
   private Instant updatedAt;
@@ -60,5 +67,9 @@ public class Offer {
 
   @OneToMany(fetch = FetchType.LAZY)
   private List<OfferImage> images;
+
+  @OneToMany(mappedBy = "offer")
+  private Set<Reservation> reservations;
+
 
 }

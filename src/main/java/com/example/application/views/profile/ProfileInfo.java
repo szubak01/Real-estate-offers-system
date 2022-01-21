@@ -16,13 +16,13 @@ import lombok.Getter;
 @Getter
 public class ProfileInfo extends HorizontalLayout {
 
-
-  private SecurityUtils securityUtils = getSecurityUtils();
+  private final SecurityUtils securityUtils;
   private final UserService userService;
   private final ProfileEditForm profileEditForm;
   private final ProfileEditForm profileInfoView;
   private Dialog editDialog;
   private final Button openEditorButton;
+
 
   private final Image profileImage;
 
@@ -81,7 +81,10 @@ public class ProfileInfo extends HorizontalLayout {
     editDialog = new Dialog();
     editDialog.add(profileEditForm);
     editDialog.setMaxWidth("800px");
-    profileEditForm.getCancelButton().addClickListener(e -> editDialog.close());
+    profileEditForm.getCancelButton().addClickListener(e -> {
+      editDialog.close();
+      //userService.populateDB();
+    });
   }
 
   private ProfileEditForm customInfoViewLayout(){
@@ -96,7 +99,7 @@ public class ProfileInfo extends HorizontalLayout {
 
     profileInfoView.getUsername().setPlaceholder(user.getUsername());
     profileInfoView.getEmail().setPlaceholder(user.getEmail());
-    profileInfoView.getPassword().setPlaceholder(user.getPassword());
+    //profileInfoView.getPassword().setPlaceholder(user.getPassword());
     profileInfoView.getPhoneNumber().setPlaceholder(user.getPhoneNumber());
 
     //Additional info

@@ -1,9 +1,9 @@
-package com.example.application.data;
+package com.example.application.data.enums;
 
 public enum Role {
     USER("user"), ADMIN("admin");
 
-    private String roleName;
+    private final String roleName;
 
     Role(String roleName) {
         this.roleName = roleName;

@@ -3,6 +3,7 @@ package com.example.application.views.myoffers;
 import com.example.application.data.entity.OfferImage;
 import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
+import com.example.application.data.enums.OfferState;
 import com.example.application.data.enums.OfferType;
 import com.example.application.data.service.LocationService;
 import com.example.application.data.service.OfferService;
@@ -32,6 +33,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -66,6 +68,7 @@ public class MyOffersView extends Div {
 
   Button deleteButton;
   Button updateButton;
+  Button stateButton;
   VerticalLayout leftTab;
 
   // Update mode layout
@@ -85,7 +88,7 @@ public class MyOffersView extends Div {
   private final NumberField livingArea = new NumberField("Living area");
   private final NumberField numberOfRooms = new NumberField("Number of rooms in apartment");
   private final Select<String> typeOfRoom = new Select<>();
-  private final RichTextEditor description = new RichTextEditor();
+  private final TextArea description = new TextArea();
 
   // Location fields
   private final TextField city = new TextField("City");
@@ -168,7 +171,7 @@ public class MyOffersView extends Div {
     Hr separator3 = new Hr();
     separator3.addClassNames("bg-primary", "flex-grow", "max-w-full");
 
-    description.addClassNames("flex-grow", "pl-0", "m-0", "mt-s");
+    description.addClassNames("pl-0", "m-0", "mt-s", "max-w-full", "box-border");
 
     H2 uploadTitle = new H2("Upload images");
     locationTitle.addClassNames("mt-l");
@@ -302,13 +305,13 @@ public class MyOffersView extends Div {
   private HorizontalLayout createCard(Offer offer) {
     card = new HorizontalLayout();
     card.addClassNames("bg-base", "rounded-l", "p-s", "justify-center", "mr-l", "ml-l", "border",
-        "border-primary");
+        "border-primary", "font-medium");
     card.getStyle().set("border-width", "2px");
 
     offerImages = offerService.getOfferImages(offer);
 
     Image image = new Image();
-    image.setMaxWidth("15%");
+    image.setMaxWidth("25%");
     image.addClassNames("rounded-l");
 
     if (!offerImages.isEmpty()) {
@@ -325,9 +328,10 @@ public class MyOffersView extends Div {
 
     FormLayout description = new FormLayout();
     description.setMaxWidth("70%");
-    description.addClassNames("overflow-hidden");
+    description.addClassNames("overflow-hidden", "overflow-ellipsis");
 
     Span title = new Span(offer.getOfferTitle());
+    title.addClassNames("overflow-ellipsis");
     description.addFormItem(title, "Title:");
 
     Span offerType = new Span(offer.getOfferTypeSelect().getOfferType());
@@ -358,8 +362,9 @@ public class MyOffersView extends Div {
     cardButtons = new VerticalLayout();
     deleteButton = new Button("DELETE");
     updateButton = new Button("UPDATE");
+    stateButton = new Button();
 
-    cardButtons.add(updateButton, deleteButton);
+    cardButtons.add(stateButton, updateButton, deleteButton);
     cardButtonsHandler(offer);
 
     card.add(image, description, cardButtons);
@@ -423,12 +428,32 @@ public class MyOffersView extends Div {
 
     updateButton.addClickListener(event -> switchToUpdateMode(offer));
 
+    if(offer.getOfferState().equals(OfferState.OPEN)){
+      stateButton.setText("CLOSE");
+      stateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+    } else {
+      stateButton.setText("OPEN");
+      stateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_PRIMARY);
+    }
+
+    stateButton.addClickListener(event -> {
+      if(offer.getOfferState().equals(OfferState.OPEN)){
+        offer.setOfferState(OfferState.CLOSED);
+      } else {
+        offer.setOfferState(OfferState.OPEN);
+      }
+
+      UI.getCurrent().getPage().reload();
+      offerService.save(offer);
+    });
+
     // css
     cardButtons.addClassNames("m-l");
     cardButtons.setMaxWidth("15%");
     deleteButton.setWidthFull();
     deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
     updateButton.setWidthFull();
+    stateButton.setWidthFull();
   }
 
   private void setRequiredIndicatorVisible(HasValueAndElement<?, ?>... components) {

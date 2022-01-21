@@ -4,6 +4,7 @@ import com.example.application.data.entity.OfferImage;
 import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
 import com.example.application.data.entity.User;
+import com.example.application.data.enums.OfferState;
 import com.example.application.data.repository.OfferImageRepository;
 import com.example.application.data.repository.LocationRepository;
 import com.example.application.data.repository.OfferRepository;
@@ -13,7 +14,6 @@ import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -30,6 +30,10 @@ public class OfferService {
   private final LocationRepository locationRepository;
   private final SecurityUtils securityUtils;
 
+  public void save(Offer offer){
+    offerRepository.save(offer);
+  }
+
   public void saveOffer(MyOffersView view) throws IOException {
     User currentUser = securityUtils.getCurrentUser().get();
 
@@ -38,6 +42,7 @@ public class OfferService {
     log.info("New location saved to database with ID: [" + location.getId() + "]");
 
     Offer offer = mapOfferValuesFromView(view, new Offer());
+    offer.setOfferState(OfferState.OPEN);
     offer.setCreatedAt(Instant.now());
     offer.setUser(currentUser);
     offer.setLocation(location);
@@ -142,4 +147,5 @@ public class OfferService {
   public Offer getOfferById(Integer offerID) {
     return offerRepository.getById(offerID);
   }
+
 }

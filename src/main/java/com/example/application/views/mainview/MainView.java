@@ -33,7 +33,7 @@ public class MainView extends VerticalLayout {
 
   public MainView(OfferService offerService) {
     this.offerService = offerService;
-    addClassNames("max-w-screen-lg", "mx-auto", "pb-l", "px-l");
+    addClassNames("max-w-screen-xl", "mx-auto", "pb-l", "px-l");
     setSizeFull();
     setDefaultHorizontalComponentAlignment(Alignment.CENTER);
     //getStyle().set("text-align", "center");

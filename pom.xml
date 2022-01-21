@@ -167,9 +167,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>imageviewer</artifactId>
-            <version>0.6.0.v8</version>
+            <groupId>org.jfairy</groupId>
+            <artifactId>jfairy</artifactId>
+            <version>0.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.3</version>
         </dependency>
 
     </dependencies>
