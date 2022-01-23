@@ -81,10 +81,7 @@ public class ProfileInfo extends HorizontalLayout {
     editDialog = new Dialog();
     editDialog.add(profileEditForm);
     editDialog.setMaxWidth("800px");
-    profileEditForm.getCancelButton().addClickListener(e -> {
-      editDialog.close();
-      //userService.populateDB();
-    });
+    profileEditForm.getCancelButton().addClickListener(e -> editDialog.close());
   }
 
   private ProfileEditForm customInfoViewLayout(){

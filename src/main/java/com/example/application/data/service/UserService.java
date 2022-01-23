@@ -8,6 +8,7 @@ import com.example.application.views.signup.SignUpForm;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.vaadin.artur.helpers.CrudService;
@@ -66,6 +67,11 @@ public class UserService extends CrudService<User, Integer> {
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public User findById(Integer userID) {
+        Optional<User> user = userRepository.findById(userID);
+        return user.get();
     }
 
 //    public void populateDB(){

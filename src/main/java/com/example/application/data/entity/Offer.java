@@ -59,6 +59,9 @@ public class Offer {
   private Instant rentStart;
   private Instant rentEnd;
 
+  private boolean ownerRated;
+  private boolean renterRated;
+
   @OneToOne
   @JoinColumn(name = "location_id")
   private Location location;
@@ -76,6 +79,9 @@ public class Offer {
   @OneToOne
   @JoinColumn(name = "renter_id")
   private User renter;
+
+  @OneToOne(mappedBy = "offer")
+  private Rate rate;
 
 
 }

@@ -6,6 +6,7 @@ import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.myoffers.MyOffersView;
 import com.example.application.views.profile.myaccount.ProfileView;
 import com.example.application.views.mainview.MainView;
+import com.example.application.views.studentactivity.StudentActivityView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -135,7 +136,7 @@ public class MainLayout extends AppLayout {
 
         new MenuItemInfo("My offers", "la la-bar-chart", MyOffersView.class),
 
-        //new MenuItemInfo("Reservations", "la la-bell", OfferReservationsView.class),
+        new MenuItemInfo("My activity", "la la-bell", StudentActivityView.class),
 
         new MenuItemInfo("Profile", "la la-user", ProfileView.class),
 

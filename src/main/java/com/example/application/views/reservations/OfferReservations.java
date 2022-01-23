@@ -1,10 +1,12 @@
 package com.example.application.views.reservations;
 
 import com.example.application.data.entity.Offer;
+import com.example.application.data.entity.Rate;
 import com.example.application.data.entity.Reservation;
 import com.example.application.data.entity.User;
 import com.example.application.data.enums.OfferState;
 import com.example.application.data.service.OfferService;
+import com.example.application.data.service.RateService;
 import com.example.application.data.service.ReservationService;
 import com.example.application.security.SecurityUtils;
 import com.example.application.views.profile.userprofile.UserProfileView;
@@ -12,7 +14,9 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -20,6 +24,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.StreamResource;
@@ -34,6 +40,7 @@ public class OfferReservations extends VerticalLayout {
   private final SecurityUtils securityUtils;
   private final OfferService offerService;
   private final ReservationService reservationService;
+  private final RateService rateService;
 
 
   // header
@@ -63,15 +70,21 @@ public class OfferReservations extends VerticalLayout {
   private HorizontalLayout buttonLayout;
   private Button checkUserButton;
   private Button rentOutButton;
+  private Button endRentButton;
+
+  private Dialog finishRentDialog;
 
 
   private Hr separator;
 
-  public OfferReservations(OfferService offerService, Integer offerID, SecurityUtils securityUtils, ReservationService reservationService) {
+  public OfferReservations(OfferService offerService, Integer offerID,
+      SecurityUtils securityUtils, ReservationService reservationService,
+      RateService rateService
+  ) {
     this.offerService = offerService;
     this.securityUtils = securityUtils;
     this.reservationService = reservationService;
-
+    this.rateService = rateService;
     addClassNames("flex", "flex-grow", "max-w-screen-lg", "mx-auto", "pb-l", "items-center");
     separator = new Hr();
     Offer offer = offerService.getOfferById(offerID);
@@ -89,8 +102,10 @@ public class OfferReservations extends VerticalLayout {
 
     if(userList.isEmpty() && offer.getOfferState().equals(OfferState.RENTED_OUT)){
       User renter = offer.getRenter();
-      add(new H2("This offer is already rented out to this student"));
+      add(new H2("Rented out since: " + offer.getRentStart().truncatedTo(ChronoUnit.SECONDS).toString().replaceAll("[TZ]", " ").substring(0,11)));
       add(createUserCard(renter, offer));
+    } else if(userList.isEmpty() && offer.getOfferState().equals(OfferState.RENT_FINISHED)){
+      add(new H2("Rent for this offer is no longer active"));
     }
 
     for (User user : userList) {
@@ -101,6 +116,8 @@ public class OfferReservations extends VerticalLayout {
       H2 noRes = new H2("There is no reservations done for this offer.");
       add(noRes);
     }
+
+    createDialog(offer);
   }
 
   private HorizontalLayout createOfferHeader(Offer offer){
@@ -140,6 +157,9 @@ public class OfferReservations extends VerticalLayout {
       header.add(closedBadge);
     } else if (offerState.equals(OfferState.RENTED_OUT)){
       header.add(rentedBadge);
+    } else {
+      rentedBadge.setText("RENT FINISHED");
+      header.add(rentedBadge);
     }
     cssForHeader();
     return header;
@@ -162,8 +182,8 @@ public class OfferReservations extends VerticalLayout {
     buttonLayout = new HorizontalLayout();
     checkUserButton = new Button("CHECK USER");
     rentOutButton = new Button("RENT OUT");
+    endRentButton = new Button("END RENT");
     buttonLayout.add(checkUserButton, rentOutButton);
-
 
     buttonHandlers(user, offer);
     cssForUserCard(user);
@@ -176,8 +196,8 @@ public class OfferReservations extends VerticalLayout {
       rentOutButton.setEnabled(true);
       rentOutButton.setText("RENT OUT");
     } else {
-      rentOutButton.setEnabled(false);
-      rentOutButton.setText("OFFER RENTED");
+      buttonLayout.remove(rentOutButton);
+      buttonLayout.add(endRentButton);
     }
     rentOutButton.addClickListener(event -> {
       Offer updateOffer = offerService.getOfferById(offer.getId());
@@ -192,6 +212,58 @@ public class OfferReservations extends VerticalLayout {
 
     checkUserButton.addClickListener(event -> navigateToUserProfile(user));
 
+    endRentButton.addClickListener(event -> finishRentDialog.open());
+
+  }
+
+  private VerticalLayout dialogContent(Offer offer){
+    VerticalLayout content = new VerticalLayout();
+    content.setSizeFull();
+    H3 header = new H3("Rate user");
+    header.addClassNames("self-center");
+    Select<Integer> select = new Select<>(1, 2, 3, 4, 5);
+    select.setSizeFull();
+    select.setValue(5);
+    select.setLabel("Rate student (1-lowest | 5-highest)");
+    TextArea comment = new TextArea("Comment");
+    comment.setSizeFull();
+
+    HorizontalLayout buttons = new HorizontalLayout();
+    Button endRentButton = new Button("END RENT");
+    Button cancelButton = new Button("CANCEL");
+    cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+    buttons.add(endRentButton, cancelButton);
+    buttons.setSizeFull();
+
+    cancelButton.addClickListener(event -> finishRentDialog.close());
+    endRentButton.addClickListener(event -> {
+
+      offer.setRentEnd(Instant.now());
+      offer.setOfferState(OfferState.RENT_FINISHED);
+      offer.setOwnerRated(true);
+      offerService.save(offer);
+
+      Rate rate = new Rate();
+      rate.setOffer(offer);
+      rate.setRateNumber(select.getValue());
+      rate.setComment(comment.getValue());
+      rate.setCreatedAt(Instant.now());
+      rate.setOwnerID(offer.getUser().getId());
+      rate.setRenterID(offer.getRenter().getId());
+      rateService.save(rate);
+
+      finishRentDialog.close();
+      UI.getCurrent().getPage().reload();
+    });
+
+    content.add(header, select, comment, buttons);
+    return content;
+  }
+
+  private void createDialog(Offer offer){
+    finishRentDialog = new Dialog();
+    finishRentDialog.add(dialogContent(offer));
+    finishRentDialog.setWidth("500px");
   }
 
   private void cssForHeader(){
@@ -250,6 +322,9 @@ public class OfferReservations extends VerticalLayout {
     rentOutButton.setHeightFull();
     rentOutButton.setWidthFull();
     rentOutButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+    endRentButton.setWidthFull();
+    endRentButton.setHeightFull();
+    endRentButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
   }
 

@@ -1,11 +1,10 @@
 package com.example.application.views.reservations;
 
 import com.example.application.data.service.OfferService;
+import com.example.application.data.service.RateService;
 import com.example.application.data.service.ReservationService;
 import com.example.application.security.SecurityUtils;
 import com.example.application.views.MainLayout;
-import com.example.application.views.mainview.SingleOffer;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -22,12 +21,15 @@ public class OfferReservationsView extends VerticalLayout implements BeforeEnter
   private final OfferService offerService;
   private final SecurityUtils securityUtils;
   private final ReservationService reservationService;
+  private final RateService rateService;
   private Integer offerID;
 
-  public OfferReservationsView(OfferService offerService, SecurityUtils securityUtils, ReservationService reservationService){
+  public OfferReservationsView(OfferService offerService, SecurityUtils securityUtils,
+      ReservationService reservationService, RateService rateService) {
     this.offerService = offerService;
     this.securityUtils = securityUtils;
     this.reservationService = reservationService;
+    this.rateService = rateService;
 
     add();
   }
@@ -37,7 +39,8 @@ public class OfferReservationsView extends VerticalLayout implements BeforeEnter
   public void beforeEnter(BeforeEnterEvent event) {
     offerID = Integer.parseInt(event.getRouteParameters().get("offerID").get());
 
-    OfferReservations offerReservations = new OfferReservations(offerService, offerID, securityUtils, reservationService);
+    OfferReservations offerReservations = new OfferReservations(offerService, offerID,
+        securityUtils, reservationService, rateService);
     add(offerReservations);
   }
 }

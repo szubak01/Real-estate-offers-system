@@ -303,7 +303,6 @@ public class MyOffersView extends Div {
       getStyle().set("text-align", "center");
 
     } else {
-
       for (Offer offer : offers) {
         leftTab.add(createCard(offer));
       }
@@ -360,7 +359,8 @@ public class MyOffersView extends Div {
     Span address = new Span(city + " " + voivodeship + " " + streetNumber + " " + postalCode);
     description.addFormItem(address, "Address:");
 
-    String date = offer.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString().replaceAll("[TZ]", " ").substring(0,11);
+    String date = offer.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString()
+        .replaceAll("[TZ]", " ").substring(0, 11);
     Span createdAt = new Span(date);
     description.addFormItem(createdAt, "Date: ");
 
@@ -376,7 +376,6 @@ public class MyOffersView extends Div {
 
     int rSize = reservationService.getAllReservationsForOffer(offer).size();
     seeResButton = new Button("Reservations: " + rSize);
-
 
     cardButtons.add(stateButton, updateButton, deleteButton, seeResButton);
     cardButtonsHandler(offer);
@@ -428,7 +427,7 @@ public class MyOffersView extends Div {
     postalCode.setValue(location.getPostalCode());
   }
 
-  private void cardButtonsHandler(Offer offer){
+  private void cardButtonsHandler(Offer offer) {
     // listeners
     deleteButton.addClickListener(event -> {
       if (offerService.offerHasImage(offer)) {
@@ -442,21 +441,29 @@ public class MyOffersView extends Div {
 
     updateButton.addClickListener(event -> switchToUpdateMode(offer));
 
-    if(offer.getOfferState().equals(OfferState.OPEN)){
+    if (offer.getOfferState().equals(OfferState.OPEN)) {
       stateButton.setText("CLOSE");
       stateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-    } else if (offer.getOfferState().equals(OfferState.CLOSED)){
+    } else if (offer.getOfferState().equals(OfferState.CLOSED)) {
       stateButton.setText("OPEN");
       stateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_PRIMARY);
     } else if (offer.getOfferState().equals(OfferState.RENTED_OUT)) {
       stateButton.setEnabled(false);
       stateButton.setText("RENTED OUT");
+      seeResButton.setText("Active rent");
+    } else {
+      stateButton.setText("RENT FINISHED");
+      stateButton.setEnabled(false);
+      seeResButton.setText("OFFER DISABLED");
+      seeResButton.setEnabled(false);
+      updateButton.setEnabled(false);
+      deleteButton.setEnabled(false);
     }
 
     stateButton.addClickListener(event -> {
-      if(offer.getOfferState().equals(OfferState.OPEN)){
+      if (offer.getOfferState().equals(OfferState.OPEN)) {
         offer.setOfferState(OfferState.CLOSED);
-      } else if (offer.getOfferState().equals(OfferState.CLOSED)){
+      } else if (offer.getOfferState().equals(OfferState.CLOSED)) {
         offer.setOfferState(OfferState.OPEN);
       }
 
@@ -476,7 +483,7 @@ public class MyOffersView extends Div {
     seeResButton.setWidthFull();
   }
 
-  public void navigateToOfferReservations(Offer offer){
+  public void navigateToOfferReservations(Offer offer) {
     String offerID = offer.getId().toString();
     String url = RouteConfiguration.forSessionScope()
         .getUrl(OfferReservationsView.class, new RouteParameters("offerID", offerID));

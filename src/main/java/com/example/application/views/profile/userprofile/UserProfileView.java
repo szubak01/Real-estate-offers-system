@@ -25,6 +25,7 @@ public class UserProfileView extends VerticalLayout implements BeforeEnterObserv
     this.securityUtils = securityUtils;
     this.userService = userService;
 
+
     add();
   }
 
