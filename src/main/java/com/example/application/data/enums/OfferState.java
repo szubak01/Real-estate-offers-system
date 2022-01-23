@@ -6,7 +6,9 @@ import lombok.Getter;
 public enum OfferState {
 
   OPEN("Open"),
-  CLOSED("Closed");
+  CLOSED("Closed"),
+  RENTED_OUT("Rented out"),
+  RENT_FINISHED("Rent finished");
 
   private final String offerState;
 

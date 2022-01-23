@@ -1,21 +1,13 @@
 package com.example.application.data.service;
 
-import com.example.application.data.enums.Role;
 import com.example.application.data.entity.User;
 import com.example.application.data.repository.UserRepository;
 import com.example.application.security.SecurityUtils;
-import com.example.application.views.profile.ProfileEditForm;
+import com.example.application.views.profile.myaccount.ProfileEditForm;
 import com.example.application.views.signup.SignUpForm;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import java.util.Locale;
-import java.util.Random;
-import org.jfairy.Fairy;
-import org.jfairy.producer.person.Person;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.vaadin.artur.helpers.CrudService;
@@ -46,7 +38,7 @@ public class UserService extends CrudService<User, Integer> {
         user.setEmail(signUpForm.getEmail().getValue());
         user.setPhoneNumber(signUpForm.getPhoneNumber().getValue());
         user.setProfilePictureUrl(signUpForm.getUpload().getBuffer().getInputStream().readAllBytes());
-        user.setRoles(Collections.singleton(Role.USER));
+        user.setRoles(Collections.singleton(signUpForm.getRoleSelect().getValue()));
         user.setCreatedAt(Instant.now());
         userRepository.save(user);
     }

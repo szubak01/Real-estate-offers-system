@@ -4,7 +4,7 @@ import com.example.application.data.entity.User;
 import com.example.application.security.SecurityUtils;
 import com.example.application.security.SecurityConfiguration;
 import com.example.application.views.myoffers.MyOffersView;
-import com.example.application.views.profile.ProfileView;
+import com.example.application.views.profile.myaccount.ProfileView;
 import com.example.application.views.mainview.MainView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -134,8 +134,8 @@ public class MainLayout extends AppLayout {
         new MenuItemInfo("Rental offers", "la la-arrow-circle-right", MainView.class),
 
         new MenuItemInfo("My offers", "la la-bar-chart", MyOffersView.class),
-//
-//        new MenuItemInfo("Reservations", "la la-bell", ProfileView.class),
+
+        //new MenuItemInfo("Reservations", "la la-bell", OfferReservationsView.class),
 
         new MenuItemInfo("Profile", "la la-user", ProfileView.class),
 

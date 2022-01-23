@@ -7,6 +7,7 @@ import com.example.application.data.entity.Reservation;
 import com.example.application.data.entity.User;
 import com.example.application.data.enums.OfferState;
 import com.example.application.data.enums.OfferType;
+import com.example.application.data.enums.Role;
 import com.example.application.data.service.OfferService;
 import com.example.application.data.service.ReservationService;
 import com.example.application.security.SecurityUtils;
@@ -31,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -211,6 +213,19 @@ public class SingleOffer extends VerticalLayout {
       reservationService.deleteReservation(offer, currentUser);
     });
 
+    if (maybeUser.isPresent()){
+      User currentUser = maybeUser.get();
+      Optional<Role> userRole = currentUser.getRoles().stream().filter(role -> role.equals(Role.USER))
+          .findFirst();
+
+      if(userRole.isPresent()){
+        reservationButton.setText("LOG IN AS A STUDENT");
+        reservationButton.setEnabled(false);
+        cancelReservationButton.setText("LOG IN AS A STUDENT");
+        cancelReservationButton.setEnabled(false);
+      }
+    }
+
     if (maybeUser.isPresent()) {
       User currentUser = maybeUser.get();
       boolean alreadyReservedByUser = reservationService.isAlreadyReservedByUser(offer, currentUser);
@@ -223,8 +238,14 @@ public class SingleOffer extends VerticalLayout {
       }
     }
 
+
     if(offer.getOfferState().equals(OfferState.CLOSED)){
       reservationButton.setText("OFFER CLOSED");
+      reservationButton.setEnabled(false);
+    }
+
+    if(offer.getOfferState().equals(OfferState.RENTED_OUT)){
+      reservationButton.setText("OFFER RENTED OUT");
       reservationButton.setEnabled(false);
     }
 

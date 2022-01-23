@@ -17,6 +17,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -72,4 +73,7 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   private Set<Reservation> reservations;
+
+  @OneToOne(mappedBy = "renter")
+  private Offer rentedOffer;
 }

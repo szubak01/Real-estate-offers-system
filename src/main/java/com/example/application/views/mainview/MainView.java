@@ -30,13 +30,11 @@ public class MainView extends VerticalLayout {
   private final Hr separator = new Hr();
   private final TextField searchBar = new TextField();
 
-
   public MainView(OfferService offerService) {
     this.offerService = offerService;
     addClassNames("max-w-screen-xl", "mx-auto", "pb-l", "px-l");
     setSizeFull();
     setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-    //getStyle().set("text-align", "center");
 
     // search layout
     searchLayoutCss();
@@ -44,7 +42,6 @@ public class MainView extends VerticalLayout {
 
     // offers layout
     CardLayout offersLayout = new CardLayout(offerService);
-
 
     add(searchLayout, offersLayout);
   }

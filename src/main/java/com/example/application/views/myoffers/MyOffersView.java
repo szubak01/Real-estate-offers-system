@@ -3,11 +3,15 @@ package com.example.application.views.myoffers;
 import com.example.application.data.entity.OfferImage;
 import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
+import com.example.application.data.entity.Reservation;
 import com.example.application.data.enums.OfferState;
 import com.example.application.data.enums.OfferType;
 import com.example.application.data.service.LocationService;
 import com.example.application.data.service.OfferService;
+import com.example.application.data.service.ReservationService;
 import com.example.application.views.MainLayout;
+import com.example.application.views.mainview.SingleOfferView;
+import com.example.application.views.reservations.OfferReservationsView;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
@@ -37,6 +41,8 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
 import java.time.format.DateTimeFormatter;
@@ -57,6 +63,7 @@ public class MyOffersView extends Div {
 
   private final OfferService offerService;
   private final LocationService locationService;
+  private final ReservationService reservationService;
 
   private final Tab listOfOffersTab;
   private final Tab addNewOfferTab;
@@ -66,9 +73,10 @@ public class MyOffersView extends Div {
 
   private HorizontalLayout card;
 
-  Button deleteButton;
-  Button updateButton;
-  Button stateButton;
+  private Button deleteButton;
+  private Button updateButton;
+  private Button stateButton;
+  private Button seeResButton;
   VerticalLayout leftTab;
 
   // Update mode layout
@@ -103,9 +111,11 @@ public class MyOffersView extends Div {
   private List<OfferImage> offerImages;
 
   public MyOffersView(OfferService offerService,
-      LocationService locationService) {
+      LocationService locationService,
+      ReservationService reservationService) {
     this.offerService = offerService;
     this.locationService = locationService;
+    this.reservationService = reservationService;
 
     OfferFormValidator validator = new OfferFormValidator(this, offerService);
     validator.formValidation();
@@ -331,7 +341,7 @@ public class MyOffersView extends Div {
     description.addClassNames("overflow-hidden", "overflow-ellipsis");
 
     Span title = new Span(offer.getOfferTitle());
-    title.addClassNames("overflow-ellipsis");
+    title.addClassNames("overflow-hidden");
     description.addFormItem(title, "Title:");
 
     Span offerType = new Span(offer.getOfferTypeSelect().getOfferType());
@@ -360,11 +370,15 @@ public class MyOffersView extends Div {
     );
 
     cardButtons = new VerticalLayout();
+    stateButton = new Button();
     deleteButton = new Button("DELETE");
     updateButton = new Button("UPDATE");
-    stateButton = new Button();
 
-    cardButtons.add(stateButton, updateButton, deleteButton);
+    int rSize = reservationService.getAllReservationsForOffer(offer).size();
+    seeResButton = new Button("Reservations: " + rSize);
+
+
+    cardButtons.add(stateButton, updateButton, deleteButton, seeResButton);
     cardButtonsHandler(offer);
 
     card.add(image, description, cardButtons);
@@ -431,21 +445,26 @@ public class MyOffersView extends Div {
     if(offer.getOfferState().equals(OfferState.OPEN)){
       stateButton.setText("CLOSE");
       stateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-    } else {
+    } else if (offer.getOfferState().equals(OfferState.CLOSED)){
       stateButton.setText("OPEN");
       stateButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_PRIMARY);
+    } else if (offer.getOfferState().equals(OfferState.RENTED_OUT)) {
+      stateButton.setEnabled(false);
+      stateButton.setText("RENTED OUT");
     }
 
     stateButton.addClickListener(event -> {
       if(offer.getOfferState().equals(OfferState.OPEN)){
         offer.setOfferState(OfferState.CLOSED);
-      } else {
+      } else if (offer.getOfferState().equals(OfferState.CLOSED)){
         offer.setOfferState(OfferState.OPEN);
       }
 
       UI.getCurrent().getPage().reload();
       offerService.save(offer);
     });
+
+    seeResButton.addClickListener(event -> navigateToOfferReservations(offer));
 
     // css
     cardButtons.addClassNames("m-l");
@@ -454,6 +473,15 @@ public class MyOffersView extends Div {
     deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
     updateButton.setWidthFull();
     stateButton.setWidthFull();
+    seeResButton.setWidthFull();
+  }
+
+  public void navigateToOfferReservations(Offer offer){
+    String offerID = offer.getId().toString();
+    String url = RouteConfiguration.forSessionScope()
+        .getUrl(OfferReservationsView.class, new RouteParameters("offerID", offerID));
+    UI.getCurrent().getPage().setLocation(url);
+
   }
 
   private void setRequiredIndicatorVisible(HasValueAndElement<?, ?>... components) {

@@ -4,6 +4,7 @@ import com.example.application.data.entity.Offer;
 import com.example.application.data.entity.Reservation;
 import com.example.application.data.entity.User;
 import com.example.application.data.repository.ReservationRepository;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class ReservationService {
 
   public void saveReservation(Offer offer, User user){
     Reservation reservation = new Reservation();
+    reservation.setCreatedAt(Instant.now());
     reservation.setOffer(offer);
     reservation.setUser(user);
 
@@ -79,4 +81,8 @@ public class ReservationService {
     return first.isPresent();
   }
 
+  public void deleteById(Integer id) {
+    reservationRepository.deleteById(id);
+    log.info("Reservation deleted | ID: [" + id + "] ");
+  }
 }

@@ -1,4 +1,4 @@
-package com.example.application.views.profile;
+package com.example.application.views.profile.myaccount;
 
 import com.example.application.data.service.UserService;
 import com.example.application.security.SecurityUtils;
@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @PageTitle("My account")
 @Route(value = "account", layout = MainLayout.class)
-@RolesAllowed("user")
+@RolesAllowed({"user", "student"})
 @Getter
 public class ProfileView extends VerticalLayout {
 

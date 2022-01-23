@@ -1,5 +1,6 @@
 package com.example.application.views.signup;
 
+import com.example.application.data.enums.Role;
 import com.example.application.data.service.UserService;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.button.Button;
@@ -10,6 +11,7 @@ import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -29,6 +31,7 @@ public class SignUpForm extends FormLayout {
   private final PasswordField password;
   private final PasswordField passwordConfirm;
   private final TextField phoneNumber;
+  private final Select<Role> roleSelect;
 
   private final Button signUpButton;
   private final Button profilePictureButton;
@@ -48,6 +51,9 @@ public class SignUpForm extends FormLayout {
     password = new PasswordField("Password");
     passwordConfirm = new PasswordField("Confirm password");
     phoneNumber = new TextField("Phone");
+    roleSelect = new Select<>();
+    roleSelect.setItems(Role.USER, Role.STUDENT);
+    roleSelect.setLabel("User type");
 
     signUpButton = new Button("Sign Up");
     profilePictureButton = new Button("Add profile picture", new Icon(VaadinIcon.PLUS));
@@ -63,7 +69,8 @@ public class SignUpForm extends FormLayout {
         title, separator,
         username, email,
         password, passwordConfirm,
-        phoneNumber, profilePictureButton,
+        phoneNumber, roleSelect,
+        profilePictureButton,
         upload,
         errorMessageFailed,
         signUpButton
@@ -90,6 +97,7 @@ public class SignUpForm extends FormLayout {
   private void styleFormLayoutElements() {
 
     title.getStyle().set("text-align", "center");
+    roleSelect.addClassNames("mt-s");
 
     separator.getStyle().set("background-color", "var(--lumo-primary-color)");
     separator.getStyle().set("flex-grow", "1");
@@ -110,12 +118,7 @@ public class SignUpForm extends FormLayout {
 
     setColspan(title, 2);
     setColspan(separator, 2);
-    setColspan(username, 1);
-    setColspan(email, 1);
-    setColspan(password, 1);
-    setColspan(passwordConfirm, 1);
-    setColspan(phoneNumber, 1);
-    setColspan(profilePictureButton, 1);
+    setColspan(profilePictureButton, 2);
     setColspan(upload, 2);
     setColspan(signUpButton, 2);
   }

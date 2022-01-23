@@ -56,6 +56,8 @@ public class Offer {
 
   private Instant createdAt;
   private Instant updatedAt;
+  private Instant rentStart;
+  private Instant rentEnd;
 
   @OneToOne
   @JoinColumn(name = "location_id")
@@ -70,6 +72,10 @@ public class Offer {
 
   @OneToMany(mappedBy = "offer")
   private Set<Reservation> reservations;
+
+  @OneToOne
+  @JoinColumn(name = "renter_id")
+  private User renter;
 
 
 }

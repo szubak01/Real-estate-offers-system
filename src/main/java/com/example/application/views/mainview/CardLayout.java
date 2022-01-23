@@ -6,7 +6,6 @@ import com.example.application.data.enums.OfferState;
 import com.example.application.data.service.OfferService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
@@ -115,21 +114,27 @@ public class CardLayout extends OrderedList {
 
     // badge
     Span open = new Span("OPEN");
-    open.getElement().getThemeList().add("badge success");
+    open.getElement().getThemeList().add("badge success primary");
     open.addClassNames("w-full", "pr-l");
 
     Span closed = new Span("CLOSED");
-    closed.getElement().getThemeList().add("badge error");
+    closed.getElement().getThemeList().add("badge error primary");
     closed.addClassNames("w-full", "pr-l");
+
+    Span rentedOut = new Span("RENTED OUT");
+    rentedOut.getElement().getThemeList().add("badge contrast primary");
+    rentedOut.addClassNames("w-full", "pr-l");
 
     buttonLayout.setWidth("20%");
     buttonLayout.add(checkButton);
     if(offer.getOfferState().equals(OfferState.OPEN)){
       buttonLayout.add(open);
+    } else if (offer.getOfferState().equals(OfferState.CLOSED)){
+      buttonLayout.add(rentedOut);
     } else {
-      buttonLayout.add(closed);
-    }
+      buttonLayout.add(rentedOut);
 
+    }
 
     if (offerService.offerHasImage(offer)) {
       image.getElement().setAttribute("src",
@@ -150,7 +155,6 @@ public class CardLayout extends OrderedList {
     String url = RouteConfiguration.forSessionScope()
         .getUrl(SingleOfferView.class, new RouteParameters("offerID", offerID));
     UI.getCurrent().getPage().setLocation(url);
-
   }
 
 }

@@ -1,4 +1,4 @@
-package com.example.application.views.profile;
+package com.example.application.views.profile.myaccount;
 
 import com.example.application.data.entity.User;
 import com.example.application.data.service.UserService;
