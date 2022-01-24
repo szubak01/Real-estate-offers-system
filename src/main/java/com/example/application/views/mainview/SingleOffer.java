@@ -11,6 +11,7 @@ import com.example.application.data.enums.Role;
 import com.example.application.data.service.OfferService;
 import com.example.application.data.service.ReservationService;
 import com.example.application.security.SecurityUtils;
+import com.example.application.views.profile.userprofile.UserProfileView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
@@ -27,6 +28,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
 import java.time.temporal.ChronoUnit;
@@ -45,7 +48,8 @@ public class SingleOffer extends VerticalLayout {
   private final HorizontalLayout horizontalLayout;
   private Image image;
 
-  public SingleOffer(OfferService offerService, Integer offerID, SecurityUtils securityUtils, ReservationService reservationService) {
+  public SingleOffer(OfferService offerService, Integer offerID, SecurityUtils securityUtils,
+      ReservationService reservationService) {
     this.offerService = offerService;
     this.securityUtils = securityUtils;
     this.reservationService = reservationService;
@@ -62,15 +66,15 @@ public class SingleOffer extends VerticalLayout {
     H2 mainTitle = new H2(offerTitle);
     mainTitle.addClassNames("mb-0");
 
-
     HorizontalLayout offerLocationLayout = new HorizontalLayout();
-    String loc = offer.getLocation().getCity() + ", " + offer.getLocation().getVoivodeship() + ", " + offer.getLocation().getStreetNumber();
+    String loc =
+        offer.getLocation().getCity() + ", " + offer.getLocation().getVoivodeship() + ", " + offer
+            .getLocation().getStreetNumber();
     Span location = new Span(loc);
     location.addClassNames("m-0", "pl-m", "font-medium");
     Icon locationIcon = new Icon(VaadinIcon.LOCATION_ARROW_CIRCLE_O);
     locationIcon.setColor("blue");
     offerLocationLayout.add(locationIcon, location);
-
 
     Hr separator = new Hr();
     separator.addClassNames("bg-primary", "flex-grow", "max-w-full");
@@ -84,10 +88,9 @@ public class SingleOffer extends VerticalLayout {
     imagesView.addClassNames("grid", "grid-cols-3", "gap-m", "box-border", "px-s");
     imagesView.setMinWidth("70%");
 
-
     if (!offerImages.isEmpty()) {
 
-      for (OfferImage img : offerImages){
+      for (OfferImage img : offerImages) {
         String imageName = img.getImageName();
         byte[] imageBytes = img.getImage();
         image = new Image();
@@ -108,7 +111,7 @@ public class SingleOffer extends VerticalLayout {
           dialog.setMaxWidth("1200px");
           dialog.setMaxHeight("700px");
 
-          if(dialog.isOpened()){
+          if (dialog.isOpened()) {
             bigImage.setMaxWidth("1200px");
             bigImage.setMaxHeight("700px");
           }
@@ -132,6 +135,10 @@ public class SingleOffer extends VerticalLayout {
     Span name = new Span(owner.getUsername());
     name.addClassNames("font-medium", "text-2xl", "text-secondary", "text-center", "pt-s", "pl-l");
 
+    Button checkOwnerButton = new Button("CHECK");
+    checkOwnerButton.addClassNames("self-center", "ms-auto");
+    checkOwnerButton.addClickListener(event -> navigateToOwnerProfile(owner));
+
     Hr separator2 = new Hr();
     separator2.addClassNames("bg-primary", "flex-grow-0", "max-w-full");
 
@@ -141,7 +148,7 @@ public class SingleOffer extends VerticalLayout {
       avatar.setWidth("65px");
       avatar.setHeight("65px");
 
-      ownerImageName.add(avatar, name);
+      ownerImageName.add(avatar, name, checkOwnerButton);
     } else {
       userImage.getElement().setAttribute("src",
           new StreamResource(" ",
@@ -150,11 +157,12 @@ public class SingleOffer extends VerticalLayout {
       userImage.setWidth("65px");
       userImage.setHeight("65px");
 
-      ownerImageName.add(userImage, name);
+      ownerImageName.add(userImage, name, checkOwnerButton);
     }
 
     // creation date
-    String createdAt = offer.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString().replaceAll("[TZ]", " ").substring(0,11);
+    String createdAt = offer.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString()
+        .replaceAll("[TZ]", " ").substring(0, 11);
     Span creationDate = new Span("Creation date:" + "  " + createdAt);
     creationDate.addClassNames("font-medium");
 
@@ -179,8 +187,6 @@ public class SingleOffer extends VerticalLayout {
     Icon counterIcon = new Icon(VaadinIcon.MALE);
     counterIcon.setColor("blue");
     counterLayout.add(counterIcon, counterLabel, counter);
-
-
 
     userInfo.add(ownerImageName, separator2,
         creationDate,
@@ -213,12 +219,13 @@ public class SingleOffer extends VerticalLayout {
       reservationService.deleteReservation(offer, currentUser);
     });
 
-    if (maybeUser.isPresent()){
+    if (maybeUser.isPresent()) {
       User currentUser = maybeUser.get();
-      Optional<Role> userRole = currentUser.getRoles().stream().filter(role -> role.equals(Role.USER))
+      Optional<Role> userRole = currentUser.getRoles().stream()
+          .filter(role -> role.equals(Role.USER))
           .findFirst();
 
-      if(userRole.isPresent()){
+      if (userRole.isPresent()) {
         reservationButton.setText("LOG IN AS A STUDENT");
         reservationButton.setEnabled(false);
         cancelReservationButton.setText("LOG IN AS A STUDENT");
@@ -228,8 +235,9 @@ public class SingleOffer extends VerticalLayout {
 
     if (maybeUser.isPresent()) {
       User currentUser = maybeUser.get();
-      boolean alreadyReservedByUser = reservationService.isAlreadyReservedByUser(offer, currentUser);
-      if(alreadyReservedByUser){
+      boolean alreadyReservedByUser = reservationService
+          .isAlreadyReservedByUser(offer, currentUser);
+      if (alreadyReservedByUser) {
         userInfo.remove(reservationButton);
         userInfo.add(cancelReservationButton);
       } else {
@@ -238,13 +246,12 @@ public class SingleOffer extends VerticalLayout {
       }
     }
 
-
-    if(offer.getOfferState().equals(OfferState.CLOSED)){
+    if (offer.getOfferState().equals(OfferState.CLOSED)) {
       reservationButton.setText("OFFER CLOSED");
       reservationButton.setEnabled(false);
     }
 
-    if(offer.getOfferState().equals(OfferState.RENTED_OUT)){
+    if (offer.getOfferState().equals(OfferState.RENTED_OUT)) {
       reservationButton.setText("OFFER RENTED OUT");
       reservationButton.setEnabled(false);
     }
@@ -315,7 +322,7 @@ public class SingleOffer extends VerticalLayout {
     // numberOfRooms
     HorizontalLayout numberOfRoomsLayout = new HorizontalLayout();
     Span numberOfRoomsLabel = new Span("Rooms:");
-    Span numberOfRooms = new Span(offer.getNumberOfRooms().toString().substring(0,1));
+    Span numberOfRooms = new Span(offer.getNumberOfRooms().toString().substring(0, 1));
     Icon numberOfRoomsIcon = new Icon(VaadinIcon.GRID_BIG_O);
     numberOfRoomsLayout.add(numberOfRoomsIcon, numberOfRoomsLabel, numberOfRooms);
     cssForFields(numberOfRoomsLayout, numberOfRoomsLabel, numberOfRooms, numberOfRoomsIcon);
@@ -334,7 +341,7 @@ public class SingleOffer extends VerticalLayout {
         pricePerMonthLayout, rentLayout,
         depositLayout, numberOfRoomsLayout);
 
-    if(offer.getOfferTypeSelect().equals(OfferType.Room)){
+    if (offer.getOfferTypeSelect().equals(OfferType.Room)) {
       detailsLayout.add(typeOfRoomLayout);
     }
 
@@ -355,7 +362,6 @@ public class SingleOffer extends VerticalLayout {
 
     descriptionLayout.add(descriptionTitle, descriptionSeparator, description);
 
-
     horizontalLayout.add(imagesView, userInfo);
 
     add(mainTitle,
@@ -367,7 +373,14 @@ public class SingleOffer extends VerticalLayout {
         descriptionLayout);
   }
 
-  private void cssForFields(HorizontalLayout layout, Span label, Span value, Icon icon){
+  private void navigateToOwnerProfile(User owner) {
+    String userID = owner.getId().toString();
+    String url = RouteConfiguration.forSessionScope()
+        .getUrl(UserProfileView.class, new RouteParameters("userID", userID));
+    UI.getCurrent().getPage().setLocation(url);
+  }
+
+  private void cssForFields(HorizontalLayout layout, Span label, Span value, Icon icon) {
     layout.addClassNames("text-l", "icon-l", "mb-m");
     label.addClassNames("pl-xs", "font-bold");
     value.addClassNames("m-0", "pl-m", "font-medium");

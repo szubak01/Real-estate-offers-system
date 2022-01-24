@@ -1,11 +1,15 @@
 package com.example.application.views.profile.userprofile;
 
 
+import com.example.application.data.entity.Rate;
 import com.example.application.data.entity.User;
+import com.example.application.data.enums.Role;
+import com.example.application.data.service.RateService;
 import com.example.application.data.service.UserService;
 import com.example.application.security.SecurityUtils;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
@@ -16,11 +20,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class UserProfile extends HorizontalLayout {
 
   private final SecurityUtils securityUtils;
   private final UserService userService;
+  private final RateService rateService;
 
   //private final HorizontalLayout content = new HorizontalLayout();
   private final VerticalLayout userInfo = new VerticalLayout();
@@ -37,20 +45,35 @@ public class UserProfile extends HorizontalLayout {
   private Span city;
   private Span overall;
 
-  public UserProfile(Integer userID, SecurityUtils securityUtils, UserService userService) {
+  public UserProfile(Integer userID, SecurityUtils securityUtils,
+      UserService userService, RateService rateService) {
     this.securityUtils = securityUtils;
     this.userService = userService;
+    this.rateService = rateService;
     addClassNames("flex", "flex-grow", "max-w-screen-lg", "mx-auto", "pb-l");
     setWidth("1024");
 
     User user = userService.findById(userID);
+    List<Rate> userRates = rateService.getUserRates(user);
+
     Hr separator = new Hr();
     separator.addClassNames("bg-primary", "flex-grow", "max-w-full");
 
     // overall
+    List<Double> iList = new ArrayList<>();
+    double sum = 0.0;
+    for (Rate r : userRates) {
+      Double rateDouble = Double.valueOf(r.getRateNumber());
+      iList.add(rateDouble);
+    }
+    for (int i = 0; i < iList.size() - 1; i++) {
+      sum += iList.get(i);
+    }
+    double avg = sum / iList.size();
+
     HorizontalLayout overallLayout = new HorizontalLayout();
     Icon starIcon = new Icon(VaadinIcon.STAR);
-    overall = new Span("Rating: TBA");
+    overall = new Span("Rating: " + avg + "/5");
     overallLayout.add(starIcon, overall);
     cssForSpans(overallLayout, overall, starIcon);
     starIcon.setColor("yellow");
@@ -59,15 +82,16 @@ public class UserProfile extends HorizontalLayout {
     image = new Image();
     if (user.getProfilePictureUrl() == null || user.getProfilePictureUrl().length <= 0){
       Avatar avatar = new Avatar(user.getUsername());
+      avatar.addClassNames("self-center");
       avatar.getStyle().set("border-radius", "12px");
-      avatar.getStyle().set("margin-right", "10px");
-      avatar.setMinHeight("240px");
-      avatar.setMinWidth("240px");
-      image.add(avatar);
+      avatar.setMinHeight("230px");
+      avatar.setMinWidth("230px");
+      userInfo.add(avatar);
     } else {
       image.getElement().setAttribute("src",
           new StreamResource(" ",
               () -> new ByteArrayInputStream(user.getProfilePictureUrl())));
+      userInfo.add(image);
     }
 
     // name
@@ -119,46 +143,73 @@ public class UserProfile extends HorizontalLayout {
     birthLayout.add(birthIcon, dateOfBirth);
     cssForSpans(birthLayout, dateOfBirth, birthIcon);
 
+    H3 opinionsHeader = new H3("Opinions");
+    opinionsHeader.addClassNames("self-center");
+    Hr separatorH = new Hr();
+    separatorH.addClassNames("bg-primary", "w-full");
+
+    userOpinions.add(opinionsHeader, separatorH);
+
+    for (Rate rate : userRates) {
+      userOpinions.add(createRateCard(rate));
+    }
+
     detailsInfo.add(overallLayout, nameLayout, emailLayout, phoneLayout, roleLayout, cityLayout, joinedAtLayout, birthLayout);
-    userInfo.add(image, separator, detailsInfo);
+    userInfo.add(separator, detailsInfo);
     add(userInfo, userOpinions);
     css();
   }
 
-  private HorizontalLayout createRateCard(User user){
+  private HorizontalLayout createRateCard(Rate rate){
+
     HorizontalLayout card = new HorizontalLayout();
-    card.addClassName("card");
-    card.setSpacing(false);
-    card.getThemeList().add("spacing-s");
+    card.addClassNames("w-full", "rounded-l", "p-xs");
+
+    User ratedBy = userService.findById(rate.getRatedBy());
 
     Image image = new Image();
-    //image.setSrc(user.getProfilePictureUrl());
+    image.setMaxWidth("60px");
+    image.setMaxHeight("60px");
+    image.addClassNames("rounded-l");
+
+    if (ratedBy.getProfilePictureUrl() == null || ratedBy.getProfilePictureUrl().length <= 0){
+      Avatar avatar = new Avatar(ratedBy.getUsername());
+      avatar.addClassNames("self-start");
+      avatar.getStyle().set("border-radius", "12px");
+      avatar.setHeight("60px");
+      avatar.setWidth("60px");
+
+      card.add(avatar);
+    } else {
+      image.getElement().setAttribute("src",
+          new StreamResource(" ",
+              () -> new ByteArrayInputStream(ratedBy.getProfilePictureUrl())));
+      card.add(image);
+    }
+
+
     VerticalLayout description = new VerticalLayout();
-    description.addClassName("description");
-    description.setSpacing(false);
-    description.setPadding(false);
+    description.addClassNames("m-0", "p-s", "bg-contrast-5", "rounded-l");
 
     HorizontalLayout header = new HorizontalLayout();
-    header.addClassName("header");
-    header.setSpacing(false);
-    header.getThemeList().add("spacing-s");
+    header.addClassNames("font-medium");
 
-//    Span name = new Span(user.getFirstName() + " " + user.getLastName());
-//    name.addClassName("name");
-//    Span date = new Span(rate.getCreatedAt());
-//    date.addClassName("date");
-//    header.add(name, date);
-//
-//    Span comment = new Span(rate.getComment());
-//    comment.addClassName("post");
-//
-//    HorizontalLayout actions = new HorizontalLayout();
-//    actions.addClassName("actions");
-//    actions.setSpacing(false);
-//    actions.getThemeList().add("spacing-s");
-//
-//    description.add(header, comment);
-//    card.add(image, description);
+    Span name = new Span(ratedBy.getFirstName() + " " + ratedBy.getLastName() + "," );
+    String createdAt = rate.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString()
+        .replaceAll("[TZ]", " ").substring(0, 11);
+    Span date = new Span(createdAt);
+    header.add(name, date);
+    Span comment = new Span(rate.getComment());
+
+    HorizontalLayout star = new HorizontalLayout();
+    Icon starIcon = new Icon(VaadinIcon.STAR);
+    starIcon.setColor("yellow");
+    Span rateSpan = new Span(rate.getRateNumber().toString());
+    rateSpan.addClassNames("m-0", "font-bold");
+    star.add(starIcon, rateSpan);
+
+    description.add(header, comment, star);
+    card.add(image, description);
     return card;
   }
 

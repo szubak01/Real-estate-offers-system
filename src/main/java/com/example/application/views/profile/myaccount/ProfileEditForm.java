@@ -34,7 +34,7 @@ public class ProfileEditForm extends FormLayout {
   private final Hr separator2;
 
   private final TextField username;
-  private final PasswordField password;
+  //private final PasswordField password;
   private final EmailField email;
   private final TextField phoneNumber;
   private final Button imageButton;
@@ -58,7 +58,7 @@ public class ProfileEditForm extends FormLayout {
     separator = new Hr();
 
     username = new TextField("Username");
-    password = new PasswordField("Password");
+    //password = new PasswordField("Password");
     email = new EmailField("Email");
     phoneNumber = new TextField("Phone");
     imageButton = new Button("Change profile picture", new Icon(VaadinIcon.PLUS));
@@ -85,7 +85,9 @@ public class ProfileEditForm extends FormLayout {
 
     add(
         title, separator,
-        username, email, password, phoneNumber, imageButton, upload,
+        username, email,
+        //password,
+        phoneNumber, imageButton, upload,
         title2, separator2,
         firstName, lastName, dateOfBirth, city,
         createButtonsLayout(),

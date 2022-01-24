@@ -48,9 +48,13 @@ public class UserService extends CrudService<User, Integer> {
         User user = securityUtils.getCurrentUser().get();
 
         user.setUsername(profileEditForm.getUsername().getValue());
+        /*
+
         if(!(profileEditForm.getPassword().getValue() == null)) {
             user.setPassword(passwordEncoder.encode(profileEditForm.getPassword().getValue()));
         }
+
+         */
         user.setEmail(profileEditForm.getEmail().getValue());
         user.setPhoneNumber(profileEditForm.getPhoneNumber().getValue());
         if(profileEditForm.getUpload().getBuffer().getInputStream().readAllBytes() != null

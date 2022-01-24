@@ -90,7 +90,7 @@ public class ProfileInfo extends HorizontalLayout {
     profileInfoView.getSaveButton().setVisible(false);
     profileInfoView.getCancelButton().setVisible(false);
     profileInfoView.getImageButton().setVisible(false);
-    profileInfoView.getPassword().setVisible(false);
+    //profileInfoView.getPassword().setVisible(false);
     profileInfoView.getTitle().getStyle().set("margin", "0px 0px 0px 0px");
     profileInfoView.getStyle().set("padding", "8px 24px 24px 8px");
 

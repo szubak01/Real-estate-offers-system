@@ -36,8 +36,7 @@ public class ProfileEditFormBinder {
     binder.bindInstanceFields(profileEditForm);
     binder.forField(profileEditForm.getUsername()).withValidator(this::usernameValidator)
         .bind("username");
-    binder.forField(profileEditForm.getPassword()).withValidator(this::passwordValidator)
-        .bind("password");
+    //binder.forField(profileEditForm.getPassword()).withValidator(this::passwordValidator).bind("password");
     binder.setStatusLabel(profileEditForm.getErrorMessageFailed());
 
     binder.readBean(currentUser);

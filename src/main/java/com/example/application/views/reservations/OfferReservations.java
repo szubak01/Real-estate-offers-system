@@ -248,8 +248,9 @@ public class OfferReservations extends VerticalLayout {
       rate.setRateNumber(select.getValue());
       rate.setComment(comment.getValue());
       rate.setCreatedAt(Instant.now());
-      rate.setOwnerID(offer.getUser().getId());
-      rate.setRenterID(offer.getRenter().getId());
+      rate.setRatedBy(offer.getUser().getId());
+      rate.setPersonRated(offer.getRenter().getId());
+      rate.setRenterRate(false);
       rateService.save(rate);
 
       finishRentDialog.close();

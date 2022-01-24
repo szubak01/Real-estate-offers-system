@@ -5,6 +5,7 @@ import com.example.application.data.enums.OfferType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
@@ -59,8 +60,9 @@ public class Offer {
   private Instant rentStart;
   private Instant rentEnd;
 
-  private boolean ownerRated;
-  private boolean renterRated;
+  @ColumnDefault("false")
+  private boolean ownerRated = false;
+  private boolean renterRated = false;
 
   @OneToOne
   @JoinColumn(name = "location_id")
@@ -80,8 +82,8 @@ public class Offer {
   @JoinColumn(name = "renter_id")
   private User renter;
 
-  @OneToOne(mappedBy = "offer")
-  private Rate rate;
+  @OneToMany(mappedBy = "offer", orphanRemoval = true)
+  private List<Rate> rates;
 
 
 }

@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,11 +27,11 @@ public class Rate {
   private Integer rateNumber;
   private String comment;
   private Instant createdAt;
-  private Integer ownerID;
-  private Integer renterID;
+  private Integer ratedBy;
+  private Integer personRated;
+  private boolean renterRate;
 
-
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "offer_id")
   private Offer offer;
 

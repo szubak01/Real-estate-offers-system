@@ -62,11 +62,11 @@
 //      Person person = fairy.person();
 //
 //      User fairyUser = new User();
-//      fairyUser.setUsername(person.username());
-//      fairyUser.setPassword(passwordEncoder.encode("user"));
+//      fairyUser.setUsername("student");
+//      fairyUser.setPassword(passwordEncoder.encode("student"));
 //      fairyUser.setEmail(person.email());
-//      fairyUser.setPhoneNumber(person.telephoneNumber().replace("-", ""));
-//      fairyUser.setRoles(Collections.singleton(Role.USER));
+//      fairyUser.setPhoneNumber("678123678");
+//      fairyUser.setRoles(Collections.singleton(Role.STUDENT));
 //      fairyUser.setCreatedAt(Instant.now());
 //
 //      fairyUser.setFirstName(person.firstName());
@@ -83,8 +83,25 @@
 //      user.setPassword(passwordEncoder.encode("user"));
 //      user.setEmail("user@example.com");
 //      user.setPhoneNumber("123123123");
+//      user.setCreatedAt(Instant.now());
+//      user.setFirstName("FirstName");
+//      user.setLastName("LastName");
+//      user.setCity("userCity");
 //      user.setRoles(Collections.singleton(Role.USER));
 //      userRepository.save(user);
+//
+////      User student = new User();
+////      user.setUsername("student");
+////      user.setPassword(passwordEncoder.encode("user"));
+////      user.setEmail("studen112t@example.com");
+////      user.setPhoneNumber("321321321");
+////      user.setCreatedAt(Instant.now());
+////      user.setFirstName("StudentName");
+////      user.setLastName("StudentLast");
+////      user.setCity("Student city");
+////      user.setDateOfBirth(LocalDate.now());
+////      user.setRoles(Collections.singleton(Role.STUDENT));
+////      userRepository.save(student);
 //
 //      User admin = new User();
 //      admin.setUsername("admin");

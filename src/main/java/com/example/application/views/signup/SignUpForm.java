@@ -53,7 +53,8 @@ public class SignUpForm extends FormLayout {
     phoneNumber = new TextField("Phone");
     roleSelect = new Select<>();
     roleSelect.setItems(Role.USER, Role.STUDENT);
-    roleSelect.setLabel("User type");
+    roleSelect.setLabel("Choose user type");
+    roleSelect.setValue(Role.STUDENT);
 
     signUpButton = new Button("Sign Up");
     profilePictureButton = new Button("Add profile picture", new Icon(VaadinIcon.PLUS));

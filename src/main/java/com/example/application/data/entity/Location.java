@@ -1,6 +1,7 @@
 package com.example.application.data.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +32,6 @@ public class Location {
   @NotBlank(message = "Cannot be empty")
   private String postalCode;
 
-  @OneToOne(mappedBy = "location", orphanRemoval = true)
+  @OneToOne(mappedBy = "location", orphanRemoval = true, fetch = FetchType.LAZY)
   private Offer offer;
 }

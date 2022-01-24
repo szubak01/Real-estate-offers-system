@@ -5,6 +5,7 @@ import com.example.application.data.entity.Location;
 import com.example.application.data.entity.Offer;
 import com.example.application.data.entity.User;
 import com.example.application.data.enums.OfferState;
+import com.example.application.data.enums.OfferType;
 import com.example.application.data.repository.OfferImageRepository;
 import com.example.application.data.repository.LocationRepository;
 import com.example.application.data.repository.OfferRepository;
@@ -148,4 +149,19 @@ public class OfferService {
     return offerRepository.getById(offerID);
   }
 
+  public List<Offer> getOffersByCity(String value) {
+    return offerRepository.findOffersByLocation_CityContaining(value);
+  }
+
+  public List<Offer> getOffersByType(OfferType offerType) {
+    return offerRepository.findOffersByOfferTypeSelect(offerType);
+  }
+
+  public List<Offer> getOffersByState(OfferState value) {
+    return offerRepository.findOffersByOfferState(value);
+  }
+
+  public List<Offer> getOffersByPrice(Double value) {
+    return offerRepository.findOffersByPricePerMonthIsLessThan(value);
+  }
 }
