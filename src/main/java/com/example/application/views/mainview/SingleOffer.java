@@ -3,7 +3,6 @@ package com.example.application.views.mainview;
 
 import com.example.application.data.entity.Offer;
 import com.example.application.data.entity.OfferImage;
-import com.example.application.data.entity.Reservation;
 import com.example.application.data.entity.User;
 import com.example.application.data.enums.OfferState;
 import com.example.application.data.enums.OfferType;
@@ -35,8 +34,6 @@ import java.io.ByteArrayInputStream;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class SingleOffer extends VerticalLayout {
@@ -222,7 +219,7 @@ public class SingleOffer extends VerticalLayout {
     if (maybeUser.isPresent()) {
       User currentUser = maybeUser.get();
       Optional<Role> userRole = currentUser.getRoles().stream()
-          .filter(role -> role.equals(Role.USER))
+          .filter(role -> role.equals(Role.LANDLORD))
           .findFirst();
 
       if (userRole.isPresent()) {

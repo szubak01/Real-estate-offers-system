@@ -17,7 +17,6 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
 
     loginForm.setHeader(new LoginI18n.Header());
     loginForm.getHeader().setTitle("Rent&Rate");
-    loginForm.getHeader().setDescription("Login using user/user or admin/admin");
     loginForm.setAdditionalInformation(null);
 
     setForgotPasswordButtonVisible(false);

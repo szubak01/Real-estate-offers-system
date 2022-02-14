@@ -36,3 +36,6 @@ public class Rate {
   private Offer offer;
 
 }
+
+
+

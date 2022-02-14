@@ -164,7 +164,8 @@ public class MainView extends VerticalLayout {
     image.setMaxWidth("40%");
 
     //mainTitle
-    mainTitle = new H3(offer.getOfferTitle());
+    mainTitle = new H3("Offer title");
+    mainTitle.setText(offer.getOfferTitle());
     mainTitle.addClassNames("mt-m", "overflow-ellipsis");
 
     // location

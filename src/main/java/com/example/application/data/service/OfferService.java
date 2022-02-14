@@ -150,18 +150,43 @@ public class OfferService {
   }
 
   public List<Offer> getOffersByCity(String value) {
-    return offerRepository.findOffersByLocation_CityContaining(value);
+
+    if (value == null || value.isEmpty()) {
+      return offerRepository.findAll();
+    } else {
+      return offerRepository.findOffersByLocation_CityContaining(value);
+    }
   }
 
-  public List<Offer> getOffersByType(OfferType offerType) {
-    return offerRepository.findOffersByOfferTypeSelect(offerType);
+  public List<Offer> getOffersByType(OfferType value) {
+    if (value == null) {
+      return offerRepository.findAll();
+    } else {
+      return offerRepository.findOffersByOfferTypeSelect(value);
+    }
   }
 
   public List<Offer> getOffersByState(OfferState value) {
-    return offerRepository.findOffersByOfferState(value);
+    if (value == null) {
+      return offerRepository.findAll();
+    } else {
+      return offerRepository.findOffersByOfferState(value);
+    }
   }
 
   public List<Offer> getOffersByPrice(Double value) {
-    return offerRepository.findOffersByPricePerMonthIsLessThan(value);
+    if (value == null || value.isNaN()) {
+      return offerRepository.findAll();
+    } else {
+      return offerRepository.findOffersByPricePerMonthIsLessThan(value);
+    }
+  }
+
+  public List<Offer> findAllOffers(String value) {
+    if (value == null || value.isEmpty()) {
+      return offerRepository.findAll();
+    } else {
+      return offerRepository.search(value);
+    }
   }
 }

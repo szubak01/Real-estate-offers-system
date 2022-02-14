@@ -3,7 +3,6 @@ package com.example.application.views.profile.userprofile;
 
 import com.example.application.data.entity.Rate;
 import com.example.application.data.entity.User;
-import com.example.application.data.enums.Role;
 import com.example.application.data.service.RateService;
 import com.example.application.data.service.UserService;
 import com.example.application.security.SecurityUtils;
@@ -66,7 +65,7 @@ public class UserProfile extends HorizontalLayout {
       Double rateDouble = Double.valueOf(r.getRateNumber());
       iList.add(rateDouble);
     }
-    for (int i = 0; i < iList.size() - 1; i++) {
+    for (int i = 0; i < iList.size(); i++) {
       sum += iList.get(i);
     }
     double avg = sum / iList.size();

@@ -3,7 +3,6 @@ package com.example.application.data.service;
 import com.example.application.data.entity.Rate;
 import com.example.application.data.entity.User;
 import com.example.application.data.repository.RateRepository;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -34,6 +33,18 @@ public class RateService {
         .stream()
         .filter(rate -> rate.getPersonRated().equals(user.getId()))
         .collect(Collectors.toList());
+  }
+
+  public void delete(Integer id) {
+    rateRepository.deleteById(id);
+  }
+
+  public List<Rate> findAllRates(String value) {
+    if (value == null || value.isEmpty()) {
+      return rateRepository.findAll();
+    } else {
+      return rateRepository.search(value);
+    }
   }
 
 //

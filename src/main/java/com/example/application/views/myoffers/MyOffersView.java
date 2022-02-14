@@ -56,7 +56,7 @@ import lombok.Setter;
 
 @PageTitle("My offers")
 @Route(value = "myOffers", layout = MainLayout.class)
-@RolesAllowed("user")
+@RolesAllowed("landlord")
 @Getter
 @Setter
 public class MyOffersView extends Div {

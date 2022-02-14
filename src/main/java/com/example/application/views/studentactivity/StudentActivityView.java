@@ -14,12 +14,9 @@ import com.example.application.security.SecurityUtils;
 import com.example.application.views.MainLayout;
 import com.example.application.views.mainview.SingleOfferView;
 import com.example.application.views.profile.userprofile.UserProfileView;
-import com.example.application.views.reservations.OfferReservationsView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
@@ -112,6 +109,7 @@ public class StudentActivityView extends VerticalLayout {
     });
 
     activeRent.add(activeRentHeader, separator);
+
 
     if (rentedOffer == null) {
       H3 nullHeaderOffer = new H3("You don't have any active rent");

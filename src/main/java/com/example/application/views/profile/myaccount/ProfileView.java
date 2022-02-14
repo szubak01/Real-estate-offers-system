@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @PageTitle("My account")
 @Route(value = "account", layout = MainLayout.class)
-@RolesAllowed({"user", "student"})
+@RolesAllowed({"landlord", "student"})
 @Getter
 public class ProfileView extends VerticalLayout {
 

@@ -8,6 +8,7 @@ import com.example.application.views.signup.SignUpForm;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,26 @@ public class UserService extends CrudService<User, Integer> {
         Optional<User> user = userRepository.findById(userID);
         return user.get();
     }
+
+  public UserService getAllUsers() {
+        return (UserService) userRepository.findAll();
+  }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public List<User> findAllUsers(String value) {
+        if (value == null || value.isEmpty()) {
+            return userRepository.findAll();
+        } else {
+            return userRepository.search(value);
+        }
+    }
+
+  public List<User> findAll() {
+        return userRepository.findAll();
+  }
 
 //    public void populateDB(){
 //        LocalDate start = LocalDate.of(1970, Month.JANUARY, 1);

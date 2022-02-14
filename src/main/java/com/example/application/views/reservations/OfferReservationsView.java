@@ -14,7 +14,7 @@ import javax.annotation.security.RolesAllowed;
 import lombok.SneakyThrows;
 
 @PageTitle("Reservations")
-@RolesAllowed("user")
+@RolesAllowed("landlord")
 @Route(value = "offer/reservations/:offerID", layout = MainLayout.class)
 public class OfferReservationsView extends VerticalLayout implements BeforeEnterObserver {
 

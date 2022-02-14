@@ -52,7 +52,7 @@ public class SignUpForm extends FormLayout {
     passwordConfirm = new PasswordField("Confirm password");
     phoneNumber = new TextField("Phone");
     roleSelect = new Select<>();
-    roleSelect.setItems(Role.USER, Role.STUDENT);
+    roleSelect.setItems(Role.LANDLORD, Role.STUDENT);
     roleSelect.setLabel("Choose user type");
     roleSelect.setValue(Role.STUDENT);
 
