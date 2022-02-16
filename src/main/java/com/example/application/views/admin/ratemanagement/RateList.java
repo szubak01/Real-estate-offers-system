@@ -120,7 +120,5 @@ public class RateList extends VerticalLayout {
     grid.setItems(rateService.findAllRates(filterText.getValue()));
   }
 
-
-
 }
 

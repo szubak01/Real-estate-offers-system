@@ -10,13 +10,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.vaadin.artur.helpers.LaunchUtil;
 
-/**
- * The entry point of the Spring Boot application.
- *
- * The @PWA annotation makes the application installable on phones, tablets
- * and some desktop browsers.
- *
- */
+
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 @Theme(value = "rrr")
 @PWA(name = "RRR", shortName = "RRR", offlineResources = {"images/logo.png"})

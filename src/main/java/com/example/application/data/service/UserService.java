@@ -47,15 +47,7 @@ public class UserService extends CrudService<User, Integer> {
 
     public void updateUser(ProfileEditForm profileEditForm) throws IOException {
         User user = securityUtils.getCurrentUser().get();
-
         user.setUsername(profileEditForm.getUsername().getValue());
-        /*
-
-        if(!(profileEditForm.getPassword().getValue() == null)) {
-            user.setPassword(passwordEncoder.encode(profileEditForm.getPassword().getValue()));
-        }
-
-         */
         user.setEmail(profileEditForm.getEmail().getValue());
         user.setPhoneNumber(profileEditForm.getPhoneNumber().getValue());
         if(profileEditForm.getUpload().getBuffer().getInputStream().readAllBytes() != null
@@ -79,7 +71,7 @@ public class UserService extends CrudService<User, Integer> {
         return user.get();
     }
 
-  public UserService getAllUsers() {
+    public UserService getAllUsers() {
         return (UserService) userRepository.findAll();
   }
 
@@ -95,33 +87,8 @@ public class UserService extends CrudService<User, Integer> {
         }
     }
 
-  public List<User> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
   }
 
-//    public void populateDB(){
-//        LocalDate start = LocalDate.of(1970, Month.JANUARY, 1);
-//        long days = ChronoUnit.DAYS.between(start, LocalDate.now());
-//        LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
-//
-//
-//
-//        Fairy fairy = Fairy.create(Locale.forLanguageTag("en"));
-//        Person person = fairy.person();
-//
-//        User fairyUser = new User();
-//        fairyUser.setUsername(person.username());
-//        fairyUser.setPassword(passwordEncoder.encode("user"));
-//        fairyUser.setEmail(person.email());
-//        fairyUser.setPhoneNumber(person.telephoneNumber().replace("-", ""));
-//        fairyUser.setRoles(Collections.singleton(Role.USER));
-//        fairyUser.setCreatedAt(Instant.now());
-//
-//        fairyUser.setFirstName(person.firstName());
-//        fairyUser.setLastName(person.lastName());
-//        fairyUser.setDateOfBirth(randomDate);
-//        fairyUser.setCity(person.getAddress().city());
-//
-//        userRepository.save(fairyUser);
-//    }
 }

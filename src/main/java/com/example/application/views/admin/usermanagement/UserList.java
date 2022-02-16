@@ -1,13 +1,9 @@
 package com.example.application.views.admin.usermanagement;
 
-import com.example.application.data.entity.Offer;
 import com.example.application.data.entity.User;
-import com.example.application.data.enums.OfferState;
-import com.example.application.data.enums.OfferType;
 import com.example.application.data.enums.Role;
 import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
-import com.example.application.views.admin.offermanagement.OfferEditForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -128,7 +124,5 @@ public class UserList extends VerticalLayout {
   private void updateList() {
     grid.setItems(userService.findAllUsers(filterText.getValue()));
   }
-
-
 
 }

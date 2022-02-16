@@ -21,13 +21,6 @@ public class RateService {
     log.info("Rate saved to database");
   }
 
-//  public List<Rate> getUserRates() {
-//    return rateRepository.findAll()
-//        .stream()
-//        .filter(rate -> !rate.isRenterRate())
-//        .collect(Collectors.toList());
-//  }
-
   public List<Rate> getUserRates(User user) {
     return rateRepository.findAll()
         .stream()
@@ -47,18 +40,4 @@ public class RateService {
     }
   }
 
-//
-//  public Collection<? extends Rate> getStudentRates() {
-//    return rateRepository.findAll()
-//        .stream()
-//        .filter(Rate::isRenterRate)
-//        .collect(Collectors.toList());
-//  }
-
-//  public List<Rate> getSpecificStudentRates(User student) {
-//    return rateRepository.findAll()
-//        .stream()
-//        .filter(rate -> rate.getPersonRated().equals(student.getId()))
-//        .collect(Collectors.toList());
-//  }
 }

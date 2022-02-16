@@ -85,5 +85,4 @@ public class Offer {
   @OneToMany(mappedBy = "offer", orphanRemoval = true)
   private List<Rate> rates;
 
-
 }

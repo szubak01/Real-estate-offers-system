@@ -70,8 +70,6 @@ public class OfferList extends VerticalLayout {
         "offerTypeSelect",
         "offerState"
         );
-//    grid.addColumn(offer -> offer.getOfferTypeSelect().getName()).setHeader("Offer ");
-//    grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
     grid.getColumns().forEach(col -> col.setAutoWidth(true));
   }
 
