@@ -17,10 +17,11 @@ Once the JAR file is built, you can run it using
 ## Project structure
 
 - `MainLayout.java` in `src/main/java` contains the navigation setup (i.e., the
-  side/top bar and the main menu). This setup uses
-  [App Layout](https://vaadin.com/components/vaadin-app-layout).
-- `views` package in `src/main/java` contains the server-side Java views of your application.
-- `views` folder in `frontend/` contains the client-side JavaScript views of your application.
+  side/top bar and the main menu). 
+- `views` package in `src/main/java` contains the server-side Java views of application.
+- `data` package in `src/main/java` contains business logic and domain model of application.
+- `security` package in `src/main/java` contains security configuration classes of application.
+- `views` folder in `frontend/` contains the client-side JavaScript views of application.
 - `themes` folder in `frontend/` contains the custom CSS styles.
 
 
