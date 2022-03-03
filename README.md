@@ -1,7 +1,7 @@
 ## Rent&Rate
 Web application(server-side) with real estate rental offers. </br> 
 Rent&Rate allows users, depending on their role, to view and post real estate offers, apartments or rooms,
-reserve and rent given offer.</br> 
+reserve and rent given offer.      
 The application also includes the option of issuing ratings about the property owner and tenant.
 
 ## Functionalities
