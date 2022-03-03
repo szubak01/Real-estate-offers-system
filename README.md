@@ -9,7 +9,7 @@ There are four roles in the application: admin, renting student and unregistered
 There are three main modules in the application.</br>
 Users have access to given modules depending on the roles assigned to them.
 - Admin module, which is responsible for managing all resources in the system.
-- Student module, the main functionality of which is the rental of a flat or a room.
+- Student module, which provides functionalities responsible for searching, booking and renting offers.
 - Landlord module, which provides functionalities responsible for posting and managing offers.
 
 For all these roles, the basic functionalities are common, i.e. listing offers in the system, displaying individual offers or checking profiles of individual users.
