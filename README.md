@@ -28,6 +28,7 @@ The most important functionalities of the application include:
 
 ## Technologies
 
+- Java 11
 - Vaadin Flow
 - Spring Boot
 - Spring Data JPA/Hibernate
