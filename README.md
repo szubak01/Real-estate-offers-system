@@ -5,12 +5,12 @@ reserve and rent given offer.</br>
 The application also includes the option of issuing ratings about the property owner and tenant.
 
 ## Functionalities
-There are four roles in the application: admin, renting student and unregistered guest.</br>
+There are four roles in the application: admin, landlord, student and unregistered guest.</br>
 There are three main modules in the application.</br>
 Users have access to given modules depending on the roles assigned to them.
-- Admin module, which is responsible for managing all resources in the system.
-- Student module, which provides functionalities responsible for searching, booking and renting offers.
-- Landlord module, which provides functionalities responsible for posting and managing offers.
+- `Admin module`, which is responsible for managing all resources in the system.
+- `Student module`, which provides functionalities responsible for searching, booking and renting offers.
+- `Landlord module`, which provides functionalities responsible for posting and managing offers.
 
 For all these roles, the basic functionalities are common, i.e. listing offers in the system, displaying individual offers or checking profiles of individual users.
 
@@ -28,6 +28,15 @@ The most important functionalities of the application include:
 - Issuing user ratings
 
 
+## Project structure
+
+- `MainLayout.java` in `src/main/java` contains the navigation setup (i.e., the
+  side/top bar and the main menu). 
+- `views` package in `src/main/java` contains the server-side Java views of application.
+- `data` package in `src/main/java` contains business logic and domain model of application.
+- `security` package in `src/main/java` contains security configuration classes of application.
+- `views` folder in `frontend/` contains the client-side JavaScript views of application.
+- `themes` folder in `frontend/` contains the custom CSS styles.
 
 
 ## Running the application
@@ -46,14 +55,5 @@ ready to be deployed. The file can be found in the `target` folder after the bui
 Once the JAR file is built, you can run it using
 `java -jar target/rrr-1.0-SNAPSHOT.jar`
 
-## Project structure
-
-- `MainLayout.java` in `src/main/java` contains the navigation setup (i.e., the
-  side/top bar and the main menu). 
-- `views` package in `src/main/java` contains the server-side Java views of application.
-- `data` package in `src/main/java` contains business logic and domain model of application.
-- `security` package in `src/main/java` contains security configuration classes of application.
-- `views` folder in `frontend/` contains the client-side JavaScript views of application.
-- `themes` folder in `frontend/` contains the custom CSS styles.
 
 
