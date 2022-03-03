@@ -1,3 +1,7 @@
+## Rent&Rate
+Web application with real estate rental offers. Rent&Rate allows users, depending on their role, to view and post offers for renting real estate, apartments or single rooms.
+
+
 ## Running the application
 
 The project is a standard Maven project. To run it from the command line,
