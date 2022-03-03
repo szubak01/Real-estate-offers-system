@@ -13,8 +13,7 @@
 
 
 ## Rent and Rate
-Rent&Rate allows users, depending on their role, to view and post real estate offers, apartments or rooms,
-reserve and rent given offer.      
+Rent&Rate allows users, depending on their role, to view, post, reserve and rent real estate offers.     
 The application also includes the option of issuing ratings about the property owner and tenant.
 
 ## Modules
