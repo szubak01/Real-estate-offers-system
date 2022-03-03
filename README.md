@@ -15,18 +15,25 @@ Users have access to given modules depending on the roles assigned to them.
 For all these roles, the basic functionalities are common, i.e. listing offers in the system, displaying individual offers or checking profiles of individual users.
 
 The most important functionalities of the application include:
-- Login / Registration
-- Adding an offer
+- Login & Registration
 - Management of the owned offers
 - Viewing the list of users who have booked a given offer
 - Renting a flat / room to a given user
 - Management of the active rent
-- Booking / Canceling an offer
+- Booking & Canceling an offer
 - Viewing a list of reservations made
 - Profile editing
 - Viewing active rent
 - Issuing user ratings
 
+## Technologies
+
+- Vaadin Flow
+- Spring Boot
+- Spring Data JPA
+- Hibernate
+- MySQL
+- Apache Maven
 
 ## Project structure
 
