@@ -1,5 +1,5 @@
 
-<h4 align="center">Web application with real estate rental offers..</h4>
+<h4 align="center">Web application with real estate rental offers.</h4>
 
 <p align="center">
   <a href="#rent-and-rate">Rent and Rate</a> •
