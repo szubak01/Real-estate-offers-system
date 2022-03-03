@@ -1,10 +1,23 @@
-## Rent&Rate
-Web application(server-side) with real estate rental offers. </br> 
+
+<h4 align="center">Web application with real estate rental offers..</h4>
+
+<p align="center">
+  <a href="#rent-and-rate">Rent and Rate</a> •
+  <a href="#modules">Modules</a> •
+  <a href="#functionalities">Functionalities</a> •
+  <a href="#technologies">Technologies</a> •
+  <a href="#project-structure">Project structure</a> •
+  <a href="#running-the-application">Running the application</a> •
+  <a href="#deploying-to-production">Deploying to Production</a> 
+</p>
+
+
+## Rent and Rate
 Rent&Rate allows users, depending on their role, to view and post real estate offers, apartments or rooms,
 reserve and rent given offer.      
 The application also includes the option of issuing ratings about the property owner and tenant.
 
-## Functionalities
+## Modules
 There are four roles in the application: admin, landlord, student and unregistered guest.</br>
 There are three main modules in the application.</br>
 Users have access to given modules depending on the roles assigned to them.
@@ -14,6 +27,7 @@ Users have access to given modules depending on the roles assigned to them.
 
 For all these roles, the basic functionalities are common, i.e. listing offers in the system, displaying individual offers or checking profiles of individual users.
 
+## Functionalities
 The most important functionalities of the application include:
 - Login & Registration
 - Management of the owned offers
