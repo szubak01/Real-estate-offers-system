@@ -1,5 +1,7 @@
 ## Rent&Rate
-Web application with real estate rental offers. Rent&Rate allows users, depending on their role, to view and post offers for renting real estate, apartments or single rooms.
+Web application with real estate rental offers. 
+Rent&Rate allows users, depending on their role, to view and post real estate offers, apartments or rooms,
+reserve and rent given offer.The application also includes the option of issuing opinions about the property owner and tenant.
 
 
 ## Running the application
